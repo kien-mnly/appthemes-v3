@@ -4,13 +4,18 @@ import '../config/theme/custom_painter.dart';
 
 class DashboardBackground extends StatelessWidget {
   final CustomBackground background;
+
   const DashboardBackground({super.key, required this.background});
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: DashboardPainter(background.backgroundColors),
-      child: Container(), // vult het scherm
+      painter: DashboardPainter(
+        backgroundColors: background.backgroundColors,
+        elementColors: background.elementColors,
+        elementOpacity: background.elementOpacity,
+      ),
+      child: Container(),
     );
   }
 }
