@@ -15,6 +15,7 @@ class CustomColors {
   // Secondary Colors
   static const turqoise500 = Color(0xFF00CEA4);
   static const turqoise800 = Color(0xFF00221A);
+  static const turqoise950 = Color(0x0000221A);
 
   static const green800 = Color(0xFF0F1C00);
   static const green700 = Color(0xFF2D9F5D);

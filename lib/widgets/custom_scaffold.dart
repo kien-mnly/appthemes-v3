@@ -46,7 +46,7 @@ class CustomScaffold extends StatelessWidget {
     this.extendBodyBehindAppBar = false,
     this.floatingNavigationBar,
     this.bottomNavigationBar,
-    this.resizeToAvoidBottomInset = true,
+    this.resizeToAvoidBottomInset = false,
     this.blurBehindAppBar = true,
   }) : super(key: key);
 
@@ -98,7 +98,9 @@ class CustomScaffold extends StatelessWidget {
                   ? ClipRect(
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                        child: Container(color: Colors.black.withOpacity(0.1)),
+                        child: Container(
+                          color: Colors.black.withValues(alpha: 0.1),
+                        ),
                       ),
                     )
                   : null,
@@ -106,7 +108,10 @@ class CustomScaffold extends StatelessWidget {
           : null,
       body: Stack(
         children: [
-          DashboardBackground(background: background),
+          Opacity(
+            opacity: background.backgroundOpacity,
+            child: DashboardBackground(background: background),
+          ),
           Padding(
             padding: EdgeInsets.only(bottom: bottom ? minBottomPadding : 0),
             child: body,

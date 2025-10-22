@@ -7,7 +7,7 @@ class CustomBackground {
   final List<Color> backgroundColors;
   final List<Color> elementColors;
   final Color accentColor;
-  final double elementOpacity;
+  final double backgroundOpacity;
 
   CustomBackground({
     required this.id,
@@ -15,7 +15,7 @@ class CustomBackground {
     required this.backgroundColors,
     required this.elementColors,
     required this.accentColor,
-    this.elementOpacity = 1.0,
+    required this.backgroundOpacity,
   });
 }
 
@@ -24,61 +24,61 @@ final List<CustomBackground> customBackgrounds = [
     id: 'bg0',
     name: 'Tech-Savvy',
     backgroundColors: [
-      CustomColors.green800,
-      CustomColors.green800.withValues(alpha: 0.75),
+      CustomColors.turqoise800,
+      CustomColors.turqoise800.withValues(alpha: 0.75),
     ],
     //requires 3 colors for better gradient effect
     elementColors: [
-      CustomColors.green800,
-      CustomColors.green800,
+      CustomColors.turqoise950,
+      CustomColors.turqoise950,
       CustomColors.green300,
     ],
     accentColor: CustomColors.green300,
-    elementOpacity: 0.75,
+    backgroundOpacity: 0.35,
   ),
   CustomBackground(
     id: 'bg1',
     name: 'Finance',
     backgroundColors: [
-      CustomColors.green800,
-      CustomColors.green800.withValues(alpha: 0.75),
+      CustomColors.turqoise800,
+      CustomColors.turqoise800.withValues(alpha: 0.75),
     ],
     elementColors: [
-      CustomColors.turqoise800,
-      CustomColors.turqoise800,
+      CustomColors.turqoise950,
+      CustomColors.turqoise950,
       CustomColors.turqoise500,
     ],
     accentColor: CustomColors.turqoise500,
-    elementOpacity: 0.75,
+    backgroundOpacity: 0.35,
   ),
   CustomBackground(
     id: 'bg2',
     name: 'Environment',
     backgroundColors: [
-      CustomColors.green800,
-      CustomColors.green800.withValues(alpha: 0.75),
+      CustomColors.turqoise800,
+      CustomColors.turqoise800.withValues(alpha: 0.75),
     ],
     elementColors: [
-      CustomColors.green800,
-      CustomColors.green800,
+      CustomColors.turqoise950,
+      CustomColors.turqoise950,
       CustomColors.green300,
     ],
     accentColor: CustomColors.green300,
-    elementOpacity: 0.75,
+    backgroundOpacity: 0.65,
   ),
   CustomBackground(
     id: 'bg3',
     name: 'Doomsday',
     backgroundColors: [
-      CustomColors.green800,
-      CustomColors.green800.withValues(alpha: 0.75),
+      CustomColors.turqoise800,
+      CustomColors.turqoise800.withValues(alpha: 0.75),
     ],
     elementColors: [
-      CustomColors.turqoise800,
-      CustomColors.turqoise800,
+      CustomColors.turqoise950,
+      CustomColors.turqoise950,
       CustomColors.turqoise500,
     ],
     accentColor: CustomColors.turqoise500,
-    elementOpacity: 0.75,
+    backgroundOpacity: 0.65,
   ),
 ];

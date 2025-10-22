@@ -13,7 +13,7 @@ class DashboardBackground extends StatelessWidget {
       painter: DashboardPainter(
         backgroundColors: background.backgroundColors,
         elementColors: background.elementColors,
-        elementOpacity: background.elementOpacity,
+        elementOpacity: background.backgroundOpacity,
       ),
       child: Container(),
     );

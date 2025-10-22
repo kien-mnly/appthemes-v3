@@ -14,7 +14,6 @@ class _AppState extends State<App> {
     return MaterialApp(
       title: 'App Template',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue),
       home: StartView(),
     );
   }
