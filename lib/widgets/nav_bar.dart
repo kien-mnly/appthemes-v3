@@ -1,123 +1,133 @@
-import 'dart:ui';
+// import 'package:flutter/material.dart';
+// import 'package:appthemes_v3/config/theme/custom_background.dart';
+// import 'custom_scaffold.dart';
 
-import 'package:appthemes_v3/config/theme/custom_background.dart';
-import 'package:flutter/material.dart';
-import 'custom_scaffold.dart';
-import 'edit_bar.dart';
+// class NavBar extends StatefulWidget {
+//   const NavBar({super.key});
 
-class NavBar extends StatefulWidget {
-  const NavBar({super.key});
+//   @override
+//   State<NavBar> createState() => _NavBarState();
+// }
 
-  @override
-  State<NavBar> createState() => _NavBarState();
-}
+// class _NavBarState extends State<NavBar> {
+//   int selectedIndex = 1;
+//   int selectedThemeIndex = 0;
 
-class _NavBarState extends State<NavBar> {
-  int selectedIndex = 1;
-  int selectedThemeIndex = 0;
-  bool dropdownOpen = false;
+//   void onItemTapped(int index) {
+//     setState(() {
+//       selectedIndex = index;
+//     });
+//   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     final items = [
+//       _NavItemData(icon: Icons.pie_chart, label: 'Statistieken'),
+//       _NavItemData(icon: Icons.home_filled, label: 'Dashboard'),
+//       _NavItemData(icon: Icons.settings, label: 'Instellingen'),
+//     ];
 
-  void onItemTapped(int index) {
-    if (!mounted) return;
-    setState(() {
-      selectedIndex = index;
-    });
-  }
+//     return CustomScaffold(
+//       background: customBackgrounds[selectedThemeIndex],
+//       extendBodyBehindAppBar: true,
+//       blurBehindAppBar: true,
+//       minBottomPadding: 0,
+//       body: IndexedStack(index: selectedIndex),
+//       floatingNavigationBar: Padding(
+//         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+//         child: DecoratedBox(
+//           decoration: BoxDecoration(
+//             borderRadius: BorderRadius.circular(30),
+//             boxShadow: [
+//               BoxShadow(
+//                 color: Colors.black.withOpacity(0.35),
+//                 blurRadius: 32,
+//                 offset: const Offset(0, 18),
+//               ),
+//             ],
+//           ),
+//           child: Padding(
+//             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+//             child: Row(
+//               children: [
+//                 for (var i = 0; i < items.length; i++)
+//                   Expanded(
+//                     child: _NavItem(
+//                       data: items[i],
+//                       isSelected: selectedIndex == i,
+//                       onTap: () => onItemTapped(i),
+//                     ),
+//                   ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
-  void _toggleDropdown(bool isOpen) {
-    if (!mounted) return;
-    setState(() {
-      dropdownOpen = isOpen;
-    });
-  }
+// class _NavItemData {
+//   const _NavItemData({required this.icon, required this.label});
 
-  void _openEditToolbar() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) {
-        return SafeArea(
-          top: false,
-          child: EditToolbar(
-            onExit: () => Navigator.of(context).pop(),
-            onThemeChange: (i) {
-              if (!mounted) return;
-              setState(() {
-                selectedThemeIndex = i;
-              });
-            },
-            selectedThemeIndex: selectedThemeIndex,
-          ),
-        );
-      },
-    );
-  }
+//   final IconData icon;
+//   final String label;
+// }
 
-  String getPageNameByIndex() {
-    switch (selectedIndex) {
-      case 0:
-        return 'statistics.title';
-      case 1:
-        return 'dashboard.title';
-      case 2:
-        return 'settings.title';
-      default:
-        return 'dashboard.title';
-    }
-  }
+// class _NavItem extends StatelessWidget {
+//   const _NavItem({
+//     required this.data,
+//     required this.isSelected,
+//     required this.onTap,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return CustomScaffold(
-      background: customBackgrounds[1],
-      bottom: false,
-      minBottomPadding: 0,
-      extendBodyBehindAppBar: true,
-      blurBehindAppBar: true,
-      body: Stack(
-        children: [
-          IndexedStack(
-            index: selectedIndex,
-            children: [
-              // ...existing pages go here...
-            ],
-          ),
-          // Floating button to open edit toolbar without resizing scaffold
-          Positioned(
-            right: 16,
-            bottom: 16,
-            child: FloatingActionButton(
-              onPressed: _openEditToolbar,
-              backgroundColor: Colors.black87,
-              child: const Icon(Icons.edit),
-            ),
-          ),
-        ],
-      ),
-      floatingNavigationBar: BottomNavigationBar(
-        currentIndex: selectedIndex,
-        onTap: onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pie_chart),
-            label: 'app_bar.statistics',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_filled),
-            label: 'app_bar.dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'app_bar.settings',
-          ),
-        ],
-      ),
-    );
-  }
-}
+//   final _NavItemData data;
+//   final bool isSelected;
+//   final VoidCallback onTap;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     const selectedColor = Color(0xFF94FF1F);
+//     final inactiveColor = Colors.white.withOpacity(0.55);
+
+//     return Material(
+//       color: Colors.transparent,
+//       child: InkWell(
+//         onTap: onTap,
+//         borderRadius: BorderRadius.circular(24),
+//         child: AnimatedOpacity(
+//           opacity: isSelected ? 1 : 0.6,
+//           duration: const Duration(milliseconds: 200),
+//           child: AnimatedContainer(
+//             duration: const Duration(milliseconds: 200),
+//             padding: const EdgeInsets.symmetric(vertical: 6),
+//             decoration: BoxDecoration(
+//               color: isSelected
+//                   ? selectedColor.withOpacity(0.12)
+//                   : Colors.transparent,
+//               borderRadius: BorderRadius.circular(24),
+//             ),
+//             child: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 Icon(
+//                   data.icon,
+//                   color: isSelected ? selectedColor : inactiveColor,
+//                   size: 28,
+//                 ),
+//                 const SizedBox(height: 8),
+//                 Text(
+//                   data.label,
+//                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
+//                     color: isSelected ? selectedColor : inactiveColor,
+//                     fontWeight: FontWeight.w600,
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
