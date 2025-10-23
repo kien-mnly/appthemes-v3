@@ -11,7 +11,7 @@ class DashboardPainter extends CustomPainter {
   DashboardPainter({
     required this.backgroundColors,
     required this.elementColors,
-    this.elementOpacity = 0.35,
+    this.elementOpacity = 0.5,
   });
 
   @override
@@ -56,9 +56,8 @@ class DashboardPainter extends CustomPainter {
         colors: opaqueColors,
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        stops: [0.0, 0.65, 1.0],
+        stops: [0.0, 0.6, 1.0],
       ).createShader(Rect.fromCircle(center: offset, radius: radius));
-
       canvas.save();
 
       canvas.translate(offset.dx, offset.dy);
@@ -78,7 +77,7 @@ class DashboardPainter extends CustomPainter {
     // --- Mono noise overlay ---
     // Noise parameters requested:
     // size: 0.5, density: 75%, color: #000000 with 35% opacity
-    final double noiseSize = 0.5;
+    final double noiseSize = 0.65;
     final double density = 0.75;
     final Paint noisePaint = Paint()
       ..color = Colors.black.withValues(alpha: 0.35)
@@ -88,7 +87,7 @@ class DashboardPainter extends CustomPainter {
 
     // Build a grid of sample points (1px step) and keep ~density of them.
     // We use a fixed seed for deterministic results across frames.
-    final rand = math.Random(42);
+    final rand = math.Random(128);
     final List<Offset> noisePoints = <Offset>[];
     for (double x = 0; x < size.width; x += 1.0) {
       for (double y = 0; y < size.height; y += 1.0) {
@@ -104,9 +103,6 @@ class DashboardPainter extends CustomPainter {
     if (noisePoints.isNotEmpty) {
       canvas.drawPoints(PointMode.points, noisePoints, noisePaint);
     }
-
-    // restore the layer created earlier
-    canvas.restore();
   }
 
   @override

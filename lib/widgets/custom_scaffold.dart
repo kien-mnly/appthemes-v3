@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:appthemes_v3/config/theme/custom_colors.dart';
 import 'package:flutter/material.dart';
 import '../config/theme/custom_background.dart';
 import 'dashboard_background.dart';
@@ -66,7 +65,7 @@ class CustomScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: CustomColors.dark900,
+      backgroundColor: background.background,
       extendBodyBehindAppBar: extendBodyBehindAppBar,
       resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       appBar: useAppBar && (title != null || leading != null || actions != null)
@@ -99,7 +98,7 @@ class CustomScaffold extends StatelessWidget {
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                         child: Container(
-                          color: Colors.black.withValues(alpha: 0.1),
+                          color: Colors.black.withValues(alpha: 1.0),
                         ),
                       ),
                     )
@@ -116,9 +115,19 @@ class CustomScaffold extends StatelessWidget {
             padding: EdgeInsets.only(bottom: bottom ? minBottomPadding : 0),
             child: body,
           ),
+          if (floatingNavigationBar != null)
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: SafeArea(
+                minimum: EdgeInsets.only(bottom: minBottomPadding),
+                child: floatingNavigationBar!,
+              ),
+            ),
         ],
       ),
-      bottomNavigationBar: floatingNavigationBar ?? bottomNavigationBar,
+      bottomNavigationBar: floatingNavigationBar == null
+          ? bottomNavigationBar
+          : null,
     );
   }
 }

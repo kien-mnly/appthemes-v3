@@ -8,6 +8,7 @@ class CustomBackground {
   final List<Color> elementColors;
   final Color accentColor;
   final double backgroundOpacity;
+  final Color background;
 
   CustomBackground({
     required this.id,
@@ -16,6 +17,7 @@ class CustomBackground {
     required this.elementColors,
     required this.accentColor,
     required this.backgroundOpacity,
+    required this.background,
   });
 }
 
@@ -27,6 +29,7 @@ final List<CustomBackground> customBackgrounds = [
       CustomColors.turqoise800,
       CustomColors.turqoise800.withValues(alpha: 0.75),
     ],
+    background: CustomColors.black,
     //requires 3 colors for better gradient effect
     elementColors: [
       CustomColors.turqoise950,
@@ -43,6 +46,7 @@ final List<CustomBackground> customBackgrounds = [
       CustomColors.turqoise800,
       CustomColors.turqoise800.withValues(alpha: 0.75),
     ],
+    background: CustomColors.black,
     elementColors: [
       CustomColors.turqoise950,
       CustomColors.turqoise950,
@@ -58,6 +62,7 @@ final List<CustomBackground> customBackgrounds = [
       CustomColors.turqoise800,
       CustomColors.turqoise800.withValues(alpha: 0.75),
     ],
+    background: CustomColors.green800,
     elementColors: [
       CustomColors.turqoise950,
       CustomColors.turqoise950,
@@ -73,6 +78,7 @@ final List<CustomBackground> customBackgrounds = [
       CustomColors.turqoise800,
       CustomColors.turqoise800.withValues(alpha: 0.75),
     ],
+    background: CustomColors.dark800,
     elementColors: [
       CustomColors.turqoise950,
       CustomColors.turqoise950,
