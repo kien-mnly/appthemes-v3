@@ -55,7 +55,7 @@ class PainterHelper {
         colors: opaqueColors,
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        stops: const [0.0, 0.55, 1.0],
+        stops: const [0.0, 0.6, 1.0],
       ).createShader(Rect.fromCircle(center: offset, radius: radius));
 
       // --- Rotation handling ---
@@ -160,7 +160,7 @@ class ThemeSelector extends CustomPainter {
   ThemeSelector({
     required this.backgroundColors,
     required this.elementColors,
-    this.elementOpacity = 0.45,
+    required this.elementOpacity,
   });
 
   @override
@@ -169,7 +169,7 @@ class ThemeSelector extends CustomPainter {
 
     final circles = [
       {
-        'offset': Offset(size.width * -0.12, size.height * 0.25),
+        'offset': Offset(size.width * -0.13, size.height * 0.22),
         'radius': 40.0,
       },
       {'offset': Offset(size.width * 0.92, size.height * 0.4), 'radius': 40.0},
@@ -185,7 +185,7 @@ class ThemeSelector extends CustomPainter {
       rotationMode: 'custom',
       rotationCallback: (index, offset, size) {
         if (index == 0) {
-          return 6;
+          return 6.2;
         } else if (index == 1) {
           return 3;
         } else if (index == 2) {
@@ -198,7 +198,7 @@ class ThemeSelector extends CustomPainter {
     PainterHelper.drawNoise(
       canvas: canvas,
       size: size,
-      strokeWidth: 0.9,
+      strokeWidth: 0.75,
       opacity: 0.22,
       density: 0.9,
     );
