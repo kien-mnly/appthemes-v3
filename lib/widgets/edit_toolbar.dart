@@ -116,9 +116,18 @@ class _ToolbarItem extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          GestureDetector(onTap: onPressed, child: icon),
-          const SizedBox(height: 4),
-          Text(label, style: TextStyle(color: textColor, fontSize: 12)),
+          GestureDetector(
+            onTap: onPressed,
+            behavior: HitTestBehavior.opaque,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                icon,
+                const SizedBox(height: 4),
+                Text(label, style: TextStyle(color: textColor, fontSize: 12)),
+              ],
+            ),
+          ),
         ],
       ),
     );

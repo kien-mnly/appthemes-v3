@@ -29,61 +29,45 @@ class _StartViewState extends State<StartView> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        CustomScaffold(
-          background: customBackgrounds[selectedThemeIndex],
-          body: Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 64.0,
-              ),
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: IconButton(
-                  icon: Icon(isEditMode ? Icons.close : Icons.edit),
-                  color: CustomColors.light,
-                  onPressed: () async {
-                    if (!isEditMode) {
-                      setState(() {
-                        isEditMode = true;
-                      });
-                      await showModalBottomSheet(
-                        context: context,
-                        backgroundColor: Colors.transparent,
-                        builder: (_) => EditToolbar(
-                          onSave: () {
-                            // Implement save functionality
-                          },
-                          onAddWidget: () {
-                            // Implement add widget functionality
-                          },
-                          onOpenSettings: toggleThemeSettings,
-                        ),
-                      );
-                      if (!mounted) return;
-                      setState(() {
-                        isEditMode = false;
-                      });
-                    } else {
-                      setState(() {
-                        isEditMode = false;
-                      });
-                    }
+    return CustomScaffold(
+      background: customBackgrounds[selectedThemeIndex],
+      actions: [
+        IconButton(
+          icon: Icon(isEditMode ? Icons.close : Icons.edit),
+          color: CustomColors.light,
+          onPressed: () async {
+            if (!isEditMode) {
+              setState(() {
+                isEditMode = true;
+              });
+              await showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                barrierColor: Colors.transparent,
+                builder: (_) => EditToolbar(
+                  onSave: () {
+                    // Implement save functionality
                   },
+                  onAddWidget: () {
+                    // Implement add widget functionality
+                  },
+                  onOpenSettings: toggleThemeSettings,
                 ),
-              ),
-            ),
-          ),
-          bottomNavigationBar: const SizedBox.shrink(),
+              );
+              if (!mounted) return;
+              setState(() {
+                isEditMode = false;
+              });
+            } else {
+              setState(() {
+                isEditMode = false;
+              });
+            }
+          },
         ),
       ],
+      body: const SizedBox.expand(),
+      bottomNavigationBar: const SizedBox.shrink(),
     );
   }
 }
