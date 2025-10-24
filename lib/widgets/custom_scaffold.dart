@@ -1,7 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../config/theme/custom_background.dart';
+import './custom_safe_area.dart';
 import 'dashboard_background.dart';
+import '../config/theme/custom_colors.dart';
+import '../config/theme/custom_theme.dart';
+import '../config/theme/size_setter.dart';
 
 enum TitleSize { sm, md, lg, xl }
 
@@ -9,7 +14,6 @@ class CustomScaffold extends StatelessWidget {
   final Widget body;
   final CustomBackground background;
 
-  // AppBar related
   final String? title;
   final Widget? leading;
   final String? subTitle;
@@ -20,13 +24,11 @@ class CustomScaffold extends StatelessWidget {
   final bool extendBodyBehindAppBar;
   final bool blurBehindAppBar;
 
-  // Bottom related
   final bool bottom;
   final double minBottomPadding;
   final Widget? floatingNavigationBar;
   final Widget? bottomNavigationBar;
 
-  // Other
   final bool resizeToAvoidBottomInset;
 
   const CustomScaffold({
@@ -64,70 +66,91 @@ class CustomScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: background.background,
-      extendBodyBehindAppBar: extendBodyBehindAppBar,
-      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-      appBar: useAppBar && (title != null || leading != null || actions != null)
-          ? AppBar(
-              title: title != null
-                  ? Column(
-                      crossAxisAlignment: centerTitle
-                          ? CrossAxisAlignment.center
-                          : CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          title!,
-                          style: TextStyle(fontSize: _getTitleFontSize()),
+    return DashboardBackground(
+      background: background,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        extendBodyBehindAppBar: extendBodyBehindAppBar,
+        resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+        extendBody: true,
+        appBar: !useAppBar
+            ? null
+            : AppBar(
+                iconTheme: IconThemeData(color: CustomColors.light100),
+                backgroundColor: Colors.transparent,
+                centerTitle: centerTitle,
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                clipBehavior: Clip.none,
+                leadingWidth: 55,
+                systemOverlayStyle: SystemUiOverlayStyle.light,
+                leading: leading,
+                toolbarHeight: 70,
+                titleSpacing: SizeSetter.getHorizontalScreenPadding(),
+                flexibleSpace: blurBehindAppBar
+                    ? ClipRect(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                          child: Container(
+                            color: Colors.black.withValues(alpha: 0.05),
+                          ),
                         ),
-                        if (subTitle != null)
-                          Text(subTitle!, style: const TextStyle(fontSize: 12)),
-                      ],
-                    )
-                  : null,
-              leading: leading,
-              actions: actions,
-              centerTitle: centerTitle,
-              backgroundColor: blurBehindAppBar
-                  ? Colors.transparent
-                  : Theme.of(context).appBarTheme.backgroundColor,
-              elevation: blurBehindAppBar ? 0 : null,
-              flexibleSpace: blurBehindAppBar
-                  ? ClipRect(
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                        child: Container(
-                          color: Colors.black.withValues(alpha: 1.0),
+                      )
+                    : null,
+                title: title != null
+                    ? Text(
+                        title!,
+                        style: TextStyle(
+                          fontSize: _getTitleFontSize(),
+                          fontWeight: FontWeight.bold,
+                          color: CustomColors.light100,
                         ),
-                      ),
-                    )
-                  : null,
-            )
-          : null,
-      body: Stack(
-        children: [
-          Opacity(
-            opacity: background.backgroundOpacity,
-            child: DashboardBackground(background: background),
-          ),
-          Padding(
-            padding: EdgeInsets.only(bottom: bottom ? minBottomPadding : 0),
-            child: body,
-          ),
-          if (floatingNavigationBar != null)
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: SafeArea(
-                minimum: EdgeInsets.only(bottom: minBottomPadding),
-                child: floatingNavigationBar!,
+                      )
+                    : null,
+                bottom: subTitle != null
+                    ? PreferredSize(
+                        preferredSize: Size.fromHeight(
+                          10 * MediaQuery.textScalerOf(context).scale(2),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 25,
+                            bottom: 10,
+                            top: 10,
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              subTitle!,
+                              style: CustomTheme(context)
+                                  .themeData
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(color: CustomColors.dark600),
+                            ),
+                          ),
+                        ),
+                      )
+                    : null,
+                actions: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      right: SizeSetter.getHorizontalScreenPadding(),
+                    ),
+                    child: Row(children: actions ?? []),
+                  ),
+                ],
               ),
-            ),
-        ],
+        body: CustomSafeArea(
+          top: !useAppBar,
+          bottom: bottom,
+          minBottomPadding: minBottomPadding,
+          child: body,
+        ),
+        bottomNavigationBar: bottomNavigationBar,
+        floatingActionButton: floatingNavigationBar,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
-      bottomNavigationBar: floatingNavigationBar == null
-          ? bottomNavigationBar
-          : null,
     );
   }
 }
