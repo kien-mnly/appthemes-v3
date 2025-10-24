@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:appthemes_v3/widgets/bottom_modal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 import '../config/theme/custom_colors.dart';
@@ -8,161 +9,156 @@ import '../widgets/button.dart';
 import '../config/theme/custom_painter.dart';
 import '../config/theme/size_setter.dart';
 
-class ThemeSettings {
-  static Future show({
+class ThemeSettingsModal extends StatefulWidget {
+  const ThemeSettingsModal({
+    super.key,
+    required this.selectedThemeIndex,
+    required this.onThemeChange,
+    required this.onExit,
+  });
+
+  final int selectedThemeIndex;
+  final ValueChanged<int> onThemeChange;
+  final VoidCallback onExit;
+
+  static Future<void> show({
     required BuildContext context,
     required int selectedThemeIndex,
     required Function(int) onThemeChange,
     required VoidCallback onExit,
-    double height = 480,
-    double opacity = 0.75,
-    double blurSigma = 12,
-  }) {
-    int currentIndex = selectedThemeIndex;
-    return showCupertinoModalPopup(
+  }) async {
+    await BottomDialog.showCustom(
       context: context,
-      barrierColor: CustomColors.dark.withValues(alpha: 0.25),
-      filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
-      builder: (BuildContext context) => StatefulBuilder(
-        builder: (context, setModalState) => ClipPath(
-          clipper: ShapeBorderClipper(
-            shape: SmoothRectangleBorder(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(35),
-                topRight: Radius.circular(35),
-              ),
-              smoothness: 0.6,
-              side: const BorderSide(width: 2, color: CustomColors.dark800),
-            ),
-          ),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
-            child: Container(
-              height: height,
-              color: CustomColors.dark.withValues(alpha: 0.75),
-              margin: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: SizeSetter.getHorizontalScreenPadding(),
-                  vertical: 15,
-                ),
-                child: CustomSafeArea(
-                  top: false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 12),
-                      Title(
-                        color: CustomColors.light,
-                        child: Text(
-                          'Thema Instellingen',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: CustomColors.light,
-                            decoration: TextDecoration.none,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Verander het thema van je dashboard of pas de naam aan.',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: CustomColors.light,
-                          fontWeight: FontWeight.w400,
-                          decoration: TextDecoration.none,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ...List.generate(customBackgrounds.length, (index) {
-                            final theme = customBackgrounds[index];
-                            final isSelected = index == currentIndex;
-                            return GestureDetector(
-                              onTap: () {
-                                if (currentIndex != index) {
-                                  setModalState(() => currentIndex = index);
-                                }
-                                onThemeChange(index);
-                              },
-                              child: SizedBox(
-                                width: 78,
-                                height: 78,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(25),
-                                    border: Border.all(
-                                      color: isSelected
-                                          ? CustomColors.green300
-                                          : CustomColors.light,
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(25),
-                                    child: Stack(
-                                      fit: StackFit.expand,
-                                      children: [
-                                        CustomPaint(
-                                          painter: ThemeSelector(
-                                            backgroundColors:
-                                                theme.backgroundColors,
-                                            elementColors: theme.elementColors,
-                                            elementOpacity: 0.42,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Button(
-                        title: 'Huidige Dashboard Thema placeholder',
-                        onPressed: () {
-                          onThemeChange(currentIndex);
-                          onExit();
-                          Navigator.of(context).pop();
-                        },
-                        type: ButtonType.outline,
-                      ),
-                      const SizedBox(height: 12),
-                      Button(
-                        title: 'Opslaan',
-                        onPressed: () {
-                          onThemeChange(currentIndex);
-                          onExit();
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      Button(
-                        title: 'Annuleren',
-                        onPressed: () {
-                          onThemeChange(currentIndex);
-                          onExit();
-                          Navigator.of(context).pop();
-                        },
-                        type: ButtonType.secondary,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+      child: ThemeSettingsModal(
+        selectedThemeIndex: selectedThemeIndex,
+        onThemeChange: onThemeChange,
+        onExit: onExit,
+      ),
+    );
+  }
+
+  @override
+  State<ThemeSettingsModal> createState() => _ThemeSettingsModalState();
+}
+
+class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
+  late int currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    currentIndex = widget.selectedThemeIndex;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 12),
+        Title(
+          color: CustomColors.light,
+          child: Text(
+            'Thema Instellingen',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: CustomColors.light,
+              decoration: TextDecoration.none,
             ),
           ),
         ),
-      ),
+        const SizedBox(height: 16),
+        Text(
+          'Verander het thema van je dashboard of pas de naam aan.',
+          style: TextStyle(
+            fontSize: 14,
+            color: CustomColors.light,
+            fontWeight: FontWeight.w400,
+            decoration: TextDecoration.none,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 24),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ...List.generate(customBackgrounds.length, (index) {
+              final theme = customBackgrounds[index];
+              final isSelected = index == currentIndex;
+              return GestureDetector(
+                onTap: () {
+                  if (currentIndex != index) {
+                    setState(() {
+                      currentIndex = index;
+                    });
+                    (() => currentIndex = index);
+                  }
+                  widget.onThemeChange(index);
+                },
+                child: SizedBox(
+                  width: 78,
+                  height: 78,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(
+                        color: isSelected
+                            ? CustomColors.green300
+                            : CustomColors.light,
+                        width: 1.5,
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(25),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          CustomPaint(
+                            painter: ThemeSelector(
+                              backgroundColors: theme.backgroundColors,
+                              elementColors: theme.elementColors,
+                              elementOpacity: 0.42,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Button(
+          title: 'Huidige Dashboard Thema placeholder',
+          onPressed: () {
+            widget.onThemeChange(currentIndex);
+            widget.onExit();
+            Navigator.of(context).pop();
+          },
+          type: ButtonType.outline,
+        ),
+        const SizedBox(height: 12),
+        Button(
+          title: 'Opslaan',
+          onPressed: () {
+            widget.onThemeChange(currentIndex);
+            widget.onExit();
+            Navigator.of(context).pop();
+          },
+        ),
+        const SizedBox(height: 12),
+        Button(
+          title: 'Annuleren',
+          onPressed: () {
+            widget.onThemeChange(currentIndex);
+            widget.onExit();
+            Navigator.of(context).pop();
+          },
+          type: ButtonType.secondary,
+        ),
+      ],
     );
   }
 }

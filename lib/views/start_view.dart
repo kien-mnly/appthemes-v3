@@ -7,6 +7,7 @@ import 'package:appthemes_v3/widgets/theme_settings_modal.dart';
 import 'package:appthemes_v3/widgets/widget_picker_modal.dart';
 import 'package:appthemes_v3/widgets/edit_toolbar.dart';
 import '../config/theme/custom_colors.dart';
+import '../widgets/bottom_modal.dart';
 
 class StartView extends StatefulWidget {
   const StartView({super.key});
@@ -18,19 +19,6 @@ class StartView extends StatefulWidget {
 class _StartViewState extends State<StartView> {
   bool isEditMode = false;
   int selectedThemeIndex = 2;
-
-  void toggleThemeSettings() {
-    ThemeSettings.show(
-      context: context,
-      selectedThemeIndex: selectedThemeIndex,
-      onThemeChange: (index) => setState(() => selectedThemeIndex = index),
-      onExit: () {},
-    );
-  }
-
-  void showWidgetPicker() {
-    WidgetPickerModal.show(context: context, onExit: () {});
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +41,26 @@ class _StartViewState extends State<StartView> {
                   onSave: () {
                     // Implement save functionality
                   },
-                  onAddWidget: showWidgetPicker,
-                  onOpenSettings: toggleThemeSettings,
+                  onAddWidget: () {
+                    BottomDialog.showCustom(
+                      context: context,
+                      child: WidgetPickerModal(),
+                    );
+                  },
+                  onOpenSettings: () {
+                    BottomDialog.showCustom(
+                      context: context,
+                      child: ThemeSettingsModal(
+                        selectedThemeIndex: selectedThemeIndex,
+                        onThemeChange: (index) {
+                          setState(() {
+                            selectedThemeIndex = index;
+                          });
+                        },
+                        onExit: () {},
+                      ),
+                    );
+                  },
                 ),
               );
               if (!mounted) return;
