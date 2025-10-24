@@ -96,16 +96,14 @@ class PainterHelper {
       ..isAntiAlias = true;
 
     final points = <Offset>[];
-    for (double x = 0; x < size.width; x += 1.0) {
-      for (double y = 0; y < size.height; y += 1.0) {
+    for (double x = 0; x < size.width; x += density) {
+      for (double y = 0; y < size.height; y += density) {
         if (rand.nextDouble() <= density) {
           points.add(Offset(x + rand.nextDouble(), y + rand.nextDouble()));
         }
       }
     }
-    if (points.isNotEmpty) {
-      canvas.drawPoints(PointMode.points, points, paint);
-    }
+    canvas.drawPoints(PointMode.points, points, paint);
   }
 }
 
@@ -143,7 +141,7 @@ class DashboardPainter extends CustomPainter {
       size: size,
       strokeWidth: 0.65,
       opacity: 0.35,
-      density: 0.75,
+      density: 1,
     );
   }
 
@@ -202,7 +200,7 @@ class ThemeSelector extends CustomPainter {
       size: size,
       strokeWidth: 0.9,
       opacity: 0.22,
-      density: 0.5,
+      density: 0.9,
     );
   }
 

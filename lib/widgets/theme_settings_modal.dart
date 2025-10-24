@@ -15,13 +15,13 @@ class ThemeSettings {
     required Function(int) onThemeChange,
     required VoidCallback onExit,
     double height = 480,
-    double opacity = 0.5,
+    double opacity = 0.75,
     double blurSigma = 12,
   }) {
     int currentIndex = selectedThemeIndex;
     return showCupertinoModalPopup(
       context: context,
-      barrierColor: CustomColors.dark.withValues(alpha: opacity),
+      barrierColor: CustomColors.dark.withValues(alpha: 0.25),
       filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
       builder: (BuildContext context) => StatefulBuilder(
         builder: (context, setModalState) => ClipPath(
@@ -39,7 +39,7 @@ class ThemeSettings {
             filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
             child: Container(
               height: height,
-              color: CustomColors.dark.withValues(alpha: opacity),
+              color: CustomColors.dark.withValues(alpha: 0.75),
               margin: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
@@ -79,7 +79,7 @@ class ThemeSettings {
                       ),
                       const SizedBox(height: 24),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ...List.generate(customBackgrounds.length, (index) {
                             final theme = customBackgrounds[index];

@@ -26,8 +26,8 @@ final List<CustomBackground> customBackgrounds = [
     id: 'bg0',
     name: 'Tech-Savvy',
     backgroundColors: [
-      CustomColors.turqoise800,
-      CustomColors.turqoise800.withValues(alpha: 0.75),
+      CustomColors.dark,
+      CustomColors.dark.withValues(alpha: 0.75),
     ],
     background: CustomColors.black,
     //requires 3 colors for better gradient effect
@@ -37,14 +37,14 @@ final List<CustomBackground> customBackgrounds = [
       CustomColors.green300,
     ],
     accentColor: CustomColors.green300,
-    backgroundOpacity: 0.35,
+    backgroundOpacity: 0.15,
   ),
   CustomBackground(
     id: 'bg1',
     name: 'Finance',
     backgroundColors: [
-      CustomColors.turqoise800,
-      CustomColors.turqoise800.withValues(alpha: 0.75),
+      CustomColors.dark,
+      CustomColors.dark.withValues(alpha: 0.75),
     ],
     background: CustomColors.black,
     elementColors: [
@@ -53,7 +53,7 @@ final List<CustomBackground> customBackgrounds = [
       CustomColors.turqoise500,
     ],
     accentColor: CustomColors.turqoise500,
-    backgroundOpacity: 0.35,
+    backgroundOpacity: 0.15,
   ),
   CustomBackground(
     id: 'bg2',
@@ -69,7 +69,7 @@ final List<CustomBackground> customBackgrounds = [
       CustomColors.green300,
     ],
     accentColor: CustomColors.green300,
-    backgroundOpacity: 0.65,
+    backgroundOpacity: 0.35,
   ),
   CustomBackground(
     id: 'bg3',
@@ -85,6 +85,6 @@ final List<CustomBackground> customBackgrounds = [
       CustomColors.turqoise500,
     ],
     accentColor: CustomColors.turqoise500,
-    backgroundOpacity: 0.65,
+    backgroundOpacity: 0.35,
   ),
 ];
