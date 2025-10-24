@@ -2,9 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-/// Shared helper class for painting gradient background,
-/// semi-circular elements, and optional noise overlay.
-class CirclePatternPainterHelper {
+/// Shared helper class for painting gradient background, circles and noise
+class PainterHelper {
   static void drawBackground(
     Canvas canvas,
     Size size,
@@ -88,9 +87,8 @@ class CirclePatternPainterHelper {
     required double strokeWidth,
     required double opacity,
     required double density,
-    int? seed,
   }) {
-    final rand = math.Random(seed);
+    final rand = math.Random(1);
     final paint = Paint()
       ..color = Colors.black.withValues(alpha: opacity)
       ..strokeCap = StrokeCap.round
@@ -124,7 +122,7 @@ class DashboardPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    CirclePatternPainterHelper.drawBackground(canvas, size, backgroundColors);
+    PainterHelper.drawBackground(canvas, size, backgroundColors);
 
     final circles = [
       {'offset': Offset(size.width * 0.1, size.height * 0), 'radius': 400.0},
@@ -132,7 +130,7 @@ class DashboardPainter extends CustomPainter {
       {'offset': Offset(size.width * 1.2, size.height * 0.75), 'radius': 200.0},
     ];
 
-    CirclePatternPainterHelper.drawHalfCircles(
+    PainterHelper.drawHalfCircles(
       canvas: canvas,
       size: size,
       elementColors: elementColors,
@@ -140,7 +138,7 @@ class DashboardPainter extends CustomPainter {
       circles: circles,
     );
 
-    CirclePatternPainterHelper.drawNoise(
+    PainterHelper.drawNoise(
       canvas: canvas,
       size: size,
       strokeWidth: 0.65,
@@ -169,7 +167,7 @@ class ThemeSelector extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    CirclePatternPainterHelper.drawBackground(canvas, size, backgroundColors);
+    PainterHelper.drawBackground(canvas, size, backgroundColors);
 
     final circles = [
       {
@@ -180,7 +178,7 @@ class ThemeSelector extends CustomPainter {
       {'offset': Offset(size.width * 0.8, size.height * 1.2), 'radius': 40.0},
     ];
 
-    CirclePatternPainterHelper.drawHalfCircles(
+    PainterHelper.drawHalfCircles(
       canvas: canvas,
       size: size,
       elementColors: elementColors,
@@ -199,13 +197,12 @@ class ThemeSelector extends CustomPainter {
       },
     );
 
-    CirclePatternPainterHelper.drawNoise(
+    PainterHelper.drawNoise(
       canvas: canvas,
       size: size,
       strokeWidth: 0.9,
       opacity: 0.22,
       density: 0.5,
-      seed: 64,
     );
   }
 

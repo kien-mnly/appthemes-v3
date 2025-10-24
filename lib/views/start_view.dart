@@ -3,7 +3,8 @@ import 'dart:ui';
 import 'package:appthemes_v3/config/theme/custom_background.dart';
 import 'package:appthemes_v3/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
-import 'package:appthemes_v3/widgets/theme_settings.dart';
+import 'package:appthemes_v3/widgets/theme_settings_modal.dart';
+import 'package:appthemes_v3/widgets/widget_picker_modal.dart';
 import 'package:appthemes_v3/widgets/edit_toolbar.dart';
 import '../config/theme/custom_colors.dart';
 
@@ -27,6 +28,10 @@ class _StartViewState extends State<StartView> {
     );
   }
 
+  void showWidgetPicker() {
+    WidgetPickerModal.show(context: context, onExit: () {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -48,9 +53,7 @@ class _StartViewState extends State<StartView> {
                   onSave: () {
                     // Implement save functionality
                   },
-                  onAddWidget: () {
-                    // Implement add widget functionality
-                  },
+                  onAddWidget: showWidgetPicker,
                   onOpenSettings: toggleThemeSettings,
                 ),
               );
