@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:appthemes_v3/config/theme/asset_icons.dart';
-import 'package:appthemes_v3/models/extensions/widget_type.dart';
+import 'package:appthemes_v3/models/widget_card.dart';
+import 'package:appthemes_v3/models/widget_type.dart';
 
 enum PickerType {
   batteryBundle,
@@ -39,11 +41,11 @@ extension PickerTypeData on PickerType {
   String get nameKey {
     switch (this) {
       case PickerType.batteryBundle:
-        return 'ZinVolt Batterij Bundle';
+        return 'ZinVolt Batterij';
       case PickerType.smartMode:
         return 'Slimme Modus';
       case PickerType.energyUsage:
-        return 'Energie Verbruik';
+        return 'Energieverbruik';
       case PickerType.environmental:
         return 'Milieu-impact';
       case PickerType.savings:
@@ -79,32 +81,38 @@ extension PickerTypeData on PickerType {
   }
 
   String? get subtitle {
+    return null;
+  }
+
+  List<WidgetCard> get defaultCards {
     switch (this) {
       case PickerType.batteryBundle:
-        return null;
+        return [];
       case PickerType.smartMode:
-        return null;
+        return [];
       case PickerType.energyUsage:
-        return null;
+        return [];
       case PickerType.environmental:
-        return null;
+        return [];
       case PickerType.savings:
-        return null;
+        return [];
       case PickerType.health:
-        return null;
+        return [];
       case PickerType.duration:
-        return null;
+        return [];
       case PickerType.balance:
-        return null;
+        return [];
     }
   }
 
   PickerItem toPickerItem() {
     return PickerItem(
+      id: nameKey,
       nameKey: nameKey,
       svgAsset: svgAsset,
       type: this,
       subtitle: subtitle,
+      cards: defaultCards,
     );
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../config/theme/custom_theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:appthemes_v3/models/extensions/widget_type.dart';
+import 'package:appthemes_v3/models/widget_type.dart';
+import 'widget_preview_container.dart';
 
 class WidgetPreviewModal extends StatelessWidget {
   final PickerItem item;
@@ -11,14 +12,28 @@ class WidgetPreviewModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // attempt to obtain a card preview from the first variant (if available)
+    Widget? cardPreview;
+    try {
+      final cards = (item as dynamic).cards;
+      if (cards != null && cards.isNotEmpty) {
+        final previewBuilder = cards.first.previewBuilder;
+        if (previewBuilder is WidgetBuilder) {
+          cardPreview = previewBuilder(context);
+        }
+      }
+    } catch (_) {
+      cardPreview = null;
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         const SizedBox(height: 8),
         SvgPicture.asset(
           item.svgAsset,
-          width: 72,
-          height: 72,
+          width: 48,
+          height: 48,
           colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
         ),
         const SizedBox(height: 16),
@@ -28,18 +43,15 @@ class WidgetPreviewModal extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 12),
-        Text(
-          'Preview of the widget goes here. This area can be expanded to render a real preview.',
-          style: CustomTheme(context).themeData.textTheme.bodyMedium,
-          textAlign: TextAlign.center,
-        ),
+        // show the preview container (uses cardPreview when available)
+        WidgetPreviewContainer(item: item, previewChild: cardPreview),
         const SizedBox(height: 20),
         Row(
           children: [
             Expanded(
               child: ElevatedButton(
                 onPressed: onAdd ?? () => Navigator.pop(context),
-                child: Text('Add widget'),
+                child: const Text('Add widget'),
               ),
             ),
           ],

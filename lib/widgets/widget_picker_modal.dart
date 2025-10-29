@@ -5,7 +5,7 @@ import '../config/theme/asset_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import './bottom_modal.dart';
 import './widget_preview_modal.dart';
-import 'package:appthemes_v3/models/extensions/widget_type.dart';
+import 'package:appthemes_v3/models/widget_type.dart';
 import 'package:appthemes_v3/models/enums/widget_type.dart';
 
 class WidgetPickerModal extends StatefulWidget {
