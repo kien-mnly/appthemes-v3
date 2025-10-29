@@ -1,13 +1,9 @@
 import 'dart:ui';
-import 'package:appthemes_v3/widgets/bottom_modal.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:smooth_corner/smooth_corner.dart';
 import '../config/theme/custom_colors.dart';
 import '../config/theme/custom_background.dart';
-import '../widgets/custom_safe_area.dart';
 import '../widgets/button.dart';
 import '../config/theme/custom_painter.dart';
-import '../config/theme/size_setter.dart';
 
 class ThemeSettingsModal extends StatefulWidget {
   const ThemeSettingsModal({
@@ -20,22 +16,6 @@ class ThemeSettingsModal extends StatefulWidget {
   final int selectedThemeIndex;
   final ValueChanged<int> onThemeChange;
   final VoidCallback onExit;
-
-  static Future<void> show({
-    required BuildContext context,
-    required int selectedThemeIndex,
-    required Function(int) onThemeChange,
-    required VoidCallback onExit,
-  }) async {
-    await BottomDialog.showCustom(
-      context: context,
-      child: ThemeSettingsModal(
-        selectedThemeIndex: selectedThemeIndex,
-        onThemeChange: onThemeChange,
-        onExit: onExit,
-      ),
-    );
-  }
 
   @override
   State<ThemeSettingsModal> createState() => _ThemeSettingsModalState();
@@ -105,7 +85,7 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
                         color: isSelected
                             ? CustomColors.green300
                             : CustomColors.light,
-                        width: 1.5,
+                        width: 1.25,
                       ),
                     ),
                     child: ClipRRect(

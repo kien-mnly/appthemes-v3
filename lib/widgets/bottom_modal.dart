@@ -98,7 +98,7 @@ class BottomDialog {
                                 height: 4,
                                 width: 40,
                                 decoration: BoxDecoration(
-                                  color: CustomColors.dark800,
+                                  color: CustomColors.dark400,
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                               )
