@@ -4,7 +4,7 @@ import 'package:appthemes_v3/config/theme/custom_background.dart';
 import 'package:appthemes_v3/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:appthemes_v3/widgets/theme_settings_modal.dart';
-import 'package:appthemes_v3/widgets/widget_picker_modal.dart';
+import 'package:appthemes_v3/widgets/widget_list.dart';
 import 'package:appthemes_v3/widgets/edit_toolbar.dart';
 import '../config/theme/custom_colors.dart';
 import '../widgets/bottom_modal.dart';
@@ -44,7 +44,7 @@ class _StartViewState extends State<StartView> {
                   onAddWidget: () {
                     BottomDialog.showCustom(
                       context: context,
-                      child: WidgetPickerModal(),
+                      child: WidgetList(),
                     );
                   },
                   onOpenSettings: () {

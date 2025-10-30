@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import '../config/theme/custom_theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:appthemes_v3/models/widget_type.dart';
-import 'widget_preview_container.dart';
+import 'package:appthemes_v3/models/widget_item.dart';
+import 'widget_container.dart';
 
-class WidgetPreviewModal extends StatelessWidget {
-  final PickerItem item;
+class WidgetModal extends StatelessWidget {
+  final WidgetItem item;
   final VoidCallback? onAdd;
 
-  const WidgetPreviewModal({super.key, required this.item, this.onAdd});
+  const WidgetModal({super.key, required this.item, this.onAdd});
 
   @override
   Widget build(BuildContext context) {
@@ -32,19 +32,18 @@ class WidgetPreviewModal extends StatelessWidget {
         const SizedBox(height: 8),
         SvgPicture.asset(
           item.svgAsset,
-          width: 48,
-          height: 48,
+          width: 32,
+          height: 32,
           colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
         ),
         const SizedBox(height: 16),
         Text(
           item.nameKey,
-          style: CustomTheme(context).themeData.textTheme.titleLarge,
+          style: CustomTheme(context).themeData.textTheme.titleMedium,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 12),
-        // show the preview container (uses cardPreview when available)
-        WidgetPreviewContainer(item: item, previewChild: cardPreview),
+        WidgetContainer(item: item, previewChild: cardPreview),
         const SizedBox(height: 20),
         Row(
           children: [
