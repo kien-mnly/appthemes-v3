@@ -38,7 +38,7 @@ class WidgetModal extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Text(
-          item.nameKey,
+          item.id,
           style: CustomTheme(context).themeData.textTheme.titleMedium,
           textAlign: TextAlign.center,
         ),

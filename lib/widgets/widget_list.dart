@@ -74,7 +74,7 @@ class _WidgetListState extends State<WidgetList> {
                         ),
                       ),
                       const SizedBox(width: 24),
-                      Text(item.nameKey),
+                      Text(item.id),
                     ],
                   ),
                   const SizedBox(height: 8),

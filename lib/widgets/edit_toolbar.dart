@@ -118,7 +118,6 @@ class _ToolbarItem extends StatelessWidget {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-
           children: [
             icon,
             const SizedBox(height: 4),

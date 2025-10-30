@@ -5,6 +5,8 @@ import 'package:appthemes_v3/models/enums/widget_size.dart';
 import 'package:appthemes_v3/models/widget_item.dart';
 import '../config/theme/custom_theme.dart';
 import 'custom_card.dart';
+import 'bundles/battery_bundle_large_preview.dart';
+import 'bundles/battery_bundle_extra_large_preview.dart';
 
 class WidgetContainer extends StatefulWidget {
   final WidgetItem item;
@@ -26,7 +28,7 @@ class _WidgetContainerState extends State<WidgetContainer> {
 
   @override
   Widget build(BuildContext context) {
-    final maxHeight = 240.0;
+    final maxHeight = 280.0;
     final sizes = widget.item.supportedSizes;
     return Column(
       children: [
@@ -36,11 +38,50 @@ class _WidgetContainerState extends State<WidgetContainer> {
           child: PageView.builder(
             itemCount: sizes.length,
             controller: _pageController,
-            onPageChanged: (index) => setState(() {
-              currentIndex = index;
-            }),
+            onPageChanged: (index) => setState(() => currentIndex = index),
             itemBuilder: (context, index) {
               final size = sizes[index];
+
+              final isBatteryBundle = widget.item.type.name == 'batteryBundle';
+              final isLarge = size == WidgetSize.large;
+              final isExtraLarge = size == WidgetSize.extraLarge;
+
+              if (isBatteryBundle && isLarge) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    BatteryBundleLargePreview(item: widget.item, size: size),
+                    const SizedBox(height: 8),
+                    Text(
+                      size.name,
+                      style: CustomTheme(
+                        context,
+                      ).themeData.textTheme.bodyMedium,
+                    ),
+                  ],
+                );
+              }
+
+              if (isBatteryBundle && isExtraLarge) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    BatteryBundleExtraLargePreview(
+                      item: widget.item,
+                      size: size,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      size.name,
+                      style: CustomTheme(
+                        context,
+                      ).themeData.textTheme.bodyMedium,
+                    ),
+                  ],
+                );
+              }
+
+              // default: single card preview
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -59,7 +100,7 @@ class _WidgetContainerState extends State<WidgetContainer> {
                               widget.item.svgAsset,
                               width: 20,
                               height: 20,
-                              colorFilter: ColorFilter.mode(
+                              colorFilter: const ColorFilter.mode(
                                 CustomColors.light,
                                 BlendMode.srcIn,
                               ),
@@ -67,7 +108,7 @@ class _WidgetContainerState extends State<WidgetContainer> {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                widget.item.nameKey,
+                                widget.item.id,
                                 overflow: TextOverflow.ellipsis,
                                 style: CustomTheme(context)
                                     .themeData
@@ -76,7 +117,7 @@ class _WidgetContainerState extends State<WidgetContainer> {
                                     ?.copyWith(color: CustomColors.light),
                               ),
                             ),
-                            Icon(
+                            const Icon(
                               Icons.chevron_right,
                               color: CustomColors.light600,
                               size: 28,
