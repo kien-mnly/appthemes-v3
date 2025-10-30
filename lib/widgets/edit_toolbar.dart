@@ -107,28 +107,24 @@ class _ToolbarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: padding,
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            onTap: onPressed,
-            behavior: HitTestBehavior.opaque,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                icon,
-                const SizedBox(height: 4),
-                Text(label, style: TextStyle(color: textColor, fontSize: 12)),
-              ],
-            ),
-          ),
-        ],
+    return GestureDetector(
+      onTap: onPressed,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: padding,
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+
+          children: [
+            icon,
+            const SizedBox(height: 4),
+            Text(label, style: TextStyle(color: textColor, fontSize: 12)),
+          ],
+        ),
       ),
     );
   }
