@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:appthemes_v3/config/theme/custom_background.dart';
 import 'package:appthemes_v3/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';

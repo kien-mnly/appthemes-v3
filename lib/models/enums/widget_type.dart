@@ -10,7 +10,7 @@ enum WidgetType {
   savings,
   health,
   duration,
-  balance,
+  energyBalance,
 }
 
 extension WidgetTypeData on WidgetType {
@@ -18,10 +18,9 @@ extension WidgetTypeData on WidgetType {
     switch (this) {
       case WidgetType.batteryBundle:
         return WidgetItem(
-          id: 'ZinVolt Batterij',
+          id: 'Batterij',
           svgAsset: AssetIcons.zinVoltLogo,
           type: this,
-          cards: const [],
           supportedSizes: [WidgetSize.large, WidgetSize.extraLarge],
         );
       case WidgetType.smartMode:
@@ -29,7 +28,6 @@ extension WidgetTypeData on WidgetType {
           id: 'Slimme Modus',
           svgAsset: AssetIcons.smartMode,
           type: this,
-          cards: const [],
           supportedSizes: [
             WidgetSize.compact,
             WidgetSize.regular,
@@ -42,7 +40,6 @@ extension WidgetTypeData on WidgetType {
           id: 'Energieverbruik',
           svgAsset: AssetIcons.lineChart,
           type: this,
-          cards: const [],
           supportedSizes: [
             WidgetSize.compact,
             WidgetSize.regular,
@@ -54,7 +51,6 @@ extension WidgetTypeData on WidgetType {
           id: 'Milieu-impact',
           svgAsset: AssetIcons.plant,
           type: this,
-          cards: const [],
           supportedSizes: [
             WidgetSize.regular,
             WidgetSize.long,
@@ -66,7 +62,6 @@ extension WidgetTypeData on WidgetType {
           id: 'Spaarmeter',
           svgAsset: AssetIcons.coins,
           type: this,
-          cards: const [],
           supportedSizes: [
             WidgetSize.compact,
             WidgetSize.regular,
@@ -79,7 +74,6 @@ extension WidgetTypeData on WidgetType {
           id: 'Batterijgezondheid',
           svgAsset: AssetIcons.batteryHealth,
           type: this,
-          cards: const [],
           supportedSizes: [WidgetSize.compact],
         );
       case WidgetType.duration:
@@ -87,7 +81,6 @@ extension WidgetTypeData on WidgetType {
           id: 'Batterijduur',
           svgAsset: AssetIcons.batteryFull,
           type: this,
-          cards: const [],
           supportedSizes: [
             WidgetSize.compact,
             WidgetSize.regular,
@@ -95,12 +88,11 @@ extension WidgetTypeData on WidgetType {
             WidgetSize.large,
           ],
         );
-      case WidgetType.balance:
+      case WidgetType.energyBalance:
         return WidgetItem(
           id: 'Energiebalans',
           svgAsset: AssetIcons.barChart,
           type: this,
-          cards: const [],
           supportedSizes: [WidgetSize.regular, WidgetSize.large],
         );
     }

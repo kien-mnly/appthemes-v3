@@ -1,5 +1,4 @@
 import '../../config/constants/widget_constants.dart';
-import '../enums/widget_type.dart';
 
 enum WidgetSize { compact, regular, long, large, extraLarge }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-const double singleRowHeight = 72.0;
+const double singleRowHeight = 80;
 const double gap = 12.0;
 const double doubleRowHeight = singleRowHeight * 2 + gap;
 
