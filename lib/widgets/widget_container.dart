@@ -5,8 +5,9 @@ import 'package:appthemes_v3/models/enums/widget_size.dart';
 import 'package:appthemes_v3/models/widget_item.dart';
 import '../config/theme/custom_theme.dart';
 import 'custom_card.dart';
-import 'bundles/battery_bundle_large_preview.dart';
-import 'bundles/battery_bundle_extra_large_preview.dart';
+import 'battery_bundle/battery_bundle_large.dart';
+import 'battery_bundle/battery_bundle_xl.dart';
+import 'smartmode/smartmode.dart';
 
 class WidgetContainer extends StatefulWidget {
   final WidgetItem item;
@@ -28,7 +29,7 @@ class _WidgetContainerState extends State<WidgetContainer> {
 
   @override
   Widget build(BuildContext context) {
-    final maxHeight = 280.0;
+    final maxHeight = 300.0;
     final sizes = widget.item.supportedSizes;
     return Column(
       children: [
@@ -50,7 +51,7 @@ class _WidgetContainerState extends State<WidgetContainer> {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    BatteryBundleLargePreview(item: widget.item, size: size),
+                    BatteryBundleLarge(item: widget.item, size: size),
                     const SizedBox(height: 8),
                     Text(
                       size.name,
@@ -66,10 +67,7 @@ class _WidgetContainerState extends State<WidgetContainer> {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    BatteryBundleExtraLargePreview(
-                      item: widget.item,
-                      size: size,
-                    ),
+                    BatteryBundleExtraLarge(item: widget.item, size: size),
                     const SizedBox(height: 8),
                     Text(
                       size.name,
@@ -88,23 +86,26 @@ class _WidgetContainerState extends State<WidgetContainer> {
                   CustomCard(
                     width: size.width,
                     height: size.height,
-                    borderRadius: 15,
+                    borderRadius: 24,
                     padding: const EdgeInsets.all(12),
-                    useGlassEffect: false,
+                    useGlassEffect: true,
                     background: CustomColors.dark700,
                     child: Column(
                       children: [
                         Row(
                           children: [
-                            SvgPicture.asset(
-                              widget.item.svgAsset,
-                              width: 20,
-                              height: 20,
-                              colorFilter: const ColorFilter.mode(
-                                CustomColors.light,
-                                BlendMode.srcIn,
+                            if (widget.item.type.name != 'smartMode' &&
+                                widget.item.type.name != 'energyUsage' &&
+                                widget.item.type.name != 'energyBalance')
+                              SvgPicture.asset(
+                                widget.item.svgAsset,
+                                width: 24,
+                                height: 24,
+                                colorFilter: const ColorFilter.mode(
+                                  Colors.white,
+                                  BlendMode.srcIn,
+                                ),
                               ),
-                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
@@ -113,22 +114,22 @@ class _WidgetContainerState extends State<WidgetContainer> {
                                 style: CustomTheme(context)
                                     .themeData
                                     .textTheme
-                                    .titleSmall
+                                    .labelLarge
                                     ?.copyWith(color: CustomColors.light),
                               ),
                             ),
                             const Icon(
                               Icons.chevron_right,
                               color: CustomColors.light600,
-                              size: 28,
+                              size: 20,
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
-
-                        // TO DO
-                        // show the content of each card preview
-                        // make a skeleton/future to load actual preview if available
+                        const SizedBox(height: 8),
+                        if (widget.item.type.name == 'smartMode')
+                          Smartmode(size: size),
+                        if (widget.item.type.name == 'batteryBundle')
+                          BatteryBundleLarge(item: widget.item, size: size),
                       ],
                     ),
                   ),
