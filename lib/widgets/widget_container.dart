@@ -1,4 +1,5 @@
 import 'package:appthemes_v3/config/theme/custom_colors.dart';
+import 'package:appthemes_v3/models/enums/widget_type.dart';
 import 'package:appthemes_v3/widgets/dashboard_widgets/energy_usage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,6 +19,8 @@ class WidgetContainer extends StatefulWidget {
 
   final bool preview;
   final WidgetSize? fixedSize;
+  final bool isEditMode;
+  final VoidCallback? onDelete;
 
   const WidgetContainer({
     super.key,
@@ -27,6 +30,8 @@ class WidgetContainer extends StatefulWidget {
     this.onPageChanged,
     this.preview = true,
     this.fixedSize,
+    this.isEditMode = false,
+    this.onDelete,
   });
   @override
   State<WidgetContainer> createState() => _WidgetContainerState();
@@ -150,16 +155,24 @@ class _WidgetContainerState extends State<WidgetContainer> {
                         ?.copyWith(color: CustomColors.light),
                   ),
                 ),
-                const Icon(
-                  Icons.chevron_right,
-                  color: CustomColors.light600,
-                  size: 20,
-                ),
+                widget.isEditMode
+                    ? IconButton(
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          color: CustomColors.error,
+                        ),
+                        onPressed: widget.onDelete,
+                      )
+                    : const Icon(
+                        Icons.chevron_right,
+                        color: CustomColors.light600,
+                        size: 20,
+                      ),
               ],
             ),
           ),
           const SizedBox(height: 8),
-          if (widget.item.type.name == 'smartMode') Smartmode(size: size),
+          if (widget.item.type == WidgetType.smartMode) Smartmode(size: size),
           if (isEnergyUsage) EnergyUsage(size: size),
         ],
       ),

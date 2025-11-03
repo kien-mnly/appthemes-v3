@@ -12,12 +12,14 @@ class Dashboard extends StatelessWidget {
     required this.isEditMode,
     required this.onReorder,
     required this.resolveItem,
+    required this.onDeleteItem,
   });
 
   final bool isEditMode;
   final void Function(int oldIndex, int newIndex) onReorder;
   final WidgetItem? Function(String itemId) resolveItem;
   final List<WidgetConfig> items;
+  final void Function(String itemId) onDeleteItem;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,8 @@ class Dashboard extends StatelessWidget {
           preview: false,
           fixedSize: dashboardItem.size,
           initialIndex: dashboardItem.selectedIndex,
+          isEditMode: isEditMode,
+          onDelete: () => onDeleteItem(dashboardItem.itemId),
         ),
       );
     }).toList();

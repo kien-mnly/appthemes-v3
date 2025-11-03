@@ -43,6 +43,15 @@ class _StartViewState extends State<StartView> {
     });
   }
 
+  void _deleteDashboardItem(String itemId) async {
+    setState(() {
+      _dashboardItems.removeWhere((item) => item.itemId == itemId);
+    });
+
+    final storage = DashboardStorage();
+    await storage.save(_dashboardItems);
+  }
+
   WidgetItem? resolveItem(String itemId) {
     try {
       return WidgetType.values
@@ -113,6 +122,7 @@ class _StartViewState extends State<StartView> {
               child: Dashboard(
                 items: _dashboardItems,
                 isEditMode: isEditMode,
+                onDeleteItem: _deleteDashboardItem,
                 onReorder: onReorder,
                 resolveItem: resolveItem,
               ),
