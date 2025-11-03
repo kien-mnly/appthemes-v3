@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:appthemes_v3/models/enums/widget_size.dart';
 import 'package:appthemes_v3/config/theme/custom_colors.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:appthemes_v3/widgets/charts/custom_line_chart.dart';
+import 'package:appthemes_v3/widgets/custom_line_chart.dart';
 
 class EnergyUsage extends StatelessWidget {
   const EnergyUsage({super.key, required this.size});
