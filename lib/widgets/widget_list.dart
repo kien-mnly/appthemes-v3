@@ -49,16 +49,17 @@ class _WidgetListState extends State<WidgetList> {
             final item = _items[index];
             return GestureDetector(
               onTap: () {
-                BottomDialog.showCustom(
-                  context: context,
-                  child: WidgetModal(
-                    item: item,
-                    onAdd: () {
-                      Navigator.pop(context);
-                      if (widget.onPick != null) widget.onPick!(item);
-                    },
-                  ),
-                );
+                if (widget.onPick != null) {
+                  widget.onPick!(item);
+                } else {
+                  BottomDialog.showCustom(
+                    context: context,
+                    child: WidgetModal(
+                      item: item,
+                      onAdd: (item, selectedIndex) {},
+                    ),
+                  );
+                }
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

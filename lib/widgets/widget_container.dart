@@ -13,8 +13,21 @@ import 'smartmode/smartmode.dart';
 class WidgetContainer extends StatefulWidget {
   final WidgetItem item;
   final Widget? previewChild;
+  final int initialIndex;
+  final ValueChanged<int>? onPageChanged;
 
-  const WidgetContainer({super.key, required this.item, this.previewChild});
+  final bool preview;
+  final WidgetSize? fixedSize;
+
+  const WidgetContainer({
+    super.key,
+    required this.item,
+    this.previewChild,
+    this.initialIndex = 0,
+    this.onPageChanged,
+    this.preview = true,
+    this.fixedSize,
+  });
   @override
   State<WidgetContainer> createState() => _WidgetContainerState();
 }
@@ -25,127 +38,44 @@ class _WidgetContainerState extends State<WidgetContainer> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
+    currentIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: currentIndex);
   }
 
   @override
   Widget build(BuildContext context) {
     final maxHeight = 300.0;
     final sizes = widget.item.supportedSizes;
+
+    // Content mode: render a single card at the chosen size, no pager/labels.
+    if (!widget.preview) {
+      final WidgetSize size =
+          widget.fixedSize ??
+          sizes[(widget.initialIndex).clamp(0, sizes.length - 1)];
+      return _buildSingle(size);
+    }
+
     return Column(
       children: [
         SizedBox(
-          width: double.infinity,
           height: maxHeight,
           child: PageView.builder(
             itemCount: sizes.length,
             controller: _pageController,
-            onPageChanged: (index) => setState(() => currentIndex = index),
+            onPageChanged: (index) {
+              setState(() => currentIndex = index);
+              widget.onPageChanged?.call(index);
+            },
             itemBuilder: (context, index) {
               final size = sizes[index];
 
-              final isBatteryBundle = widget.item.type.name == 'batteryBundle';
-              final isLarge = size == WidgetSize.large;
-              final isExtraLarge = size == WidgetSize.extraLarge;
+              // Use the same render path for all types; add a size label below.
+              final content = _buildSingle(size);
 
-              if (isBatteryBundle && isLarge) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    BatteryBundleLarge(item: widget.item, size: size),
-                    const SizedBox(height: 8),
-                    Text(
-                      size.name,
-                      style: CustomTheme(
-                        context,
-                      ).themeData.textTheme.bodyMedium,
-                    ),
-                  ],
-                );
-              }
-
-              if (isBatteryBundle && isExtraLarge) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    BatteryBundleExtraLarge(item: widget.item, size: size),
-                    const SizedBox(height: 8),
-                    Text(
-                      size.name,
-                      style: CustomTheme(
-                        context,
-                      ).themeData.textTheme.bodyMedium,
-                    ),
-                  ],
-                );
-              }
-
-              // default: single card preview
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CustomCard(
-                    width: size.width,
-                    height: size.height,
-                    borderRadius: 24,
-                    padding:
-                        (widget.item.type.name == 'energyUsage' &&
-                                size == WidgetSize.large ||
-                            size == WidgetSize.regular)
-                        ? EdgeInsets.zero
-                        : const EdgeInsets.all(12),
-                    useGlassEffect: true,
-                    background: CustomColors.dark700,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: (widget.item.type.name == 'energyUsage')
-                              ? EdgeInsets.all(12)
-                              : EdgeInsets.zero,
-                          child: Row(
-                            children: [
-                              if (widget.item.type.name != 'smartMode' &&
-                                  widget.item.type.name != 'energyUsage' &&
-                                  widget.item.type.name != 'energyBalance')
-                                SvgPicture.asset(
-                                  widget.item.svgAsset,
-                                  width: 24,
-                                  height: 24,
-                                  colorFilter: const ColorFilter.mode(
-                                    Colors.white,
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  widget.item.id,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: CustomTheme(context)
-                                      .themeData
-                                      .textTheme
-                                      .labelLarge
-                                      ?.copyWith(color: CustomColors.light),
-                                ),
-                              ),
-                              const Icon(
-                                Icons.chevron_right,
-                                color: CustomColors.light600,
-                                size: 20,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        if (widget.item.type.name == 'smartMode')
-                          Smartmode(size: size),
-                        if (widget.item.type.name == 'batteryBundle')
-                          BatteryBundleLarge(item: widget.item, size: size),
-                        if (widget.item.type.name == 'energyUsage')
-                          EnergyUsage(size: size),
-                      ],
-                    ),
-                  ),
+                  content,
                   const SizedBox(height: 8),
                   Text(
                     size.name,
@@ -173,6 +103,69 @@ class _WidgetContainerState extends State<WidgetContainer> {
           }),
         ),
       ],
+    );
+  }
+
+  Widget _buildSingle(WidgetSize size) {
+    final isBatteryBundle = widget.item.type.name == 'batteryBundle';
+    if (isBatteryBundle) {
+      return size == WidgetSize.extraLarge
+          ? BatteryBundleExtraLarge(item: widget.item, size: size)
+          : BatteryBundleLarge(item: widget.item, size: size);
+    }
+
+    final isEnergyUsage = widget.item.type.name == 'energyUsage';
+    final isRegular = size == WidgetSize.regular;
+
+    return CustomCard(
+      width: size.width,
+      height: size.height,
+      borderRadius: 24,
+      padding: (isEnergyUsage && size == WidgetSize.large) || isRegular
+          ? EdgeInsets.zero
+          : const EdgeInsets.all(12),
+      useGlassEffect: true,
+      background: CustomColors.dark700,
+      child: Column(
+        children: [
+          Padding(
+            padding: isEnergyUsage ? const EdgeInsets.all(12) : EdgeInsets.zero,
+            child: Row(
+              children: [
+                if (widget.item.type.name != 'smartMode' &&
+                    widget.item.type.name != 'energyUsage' &&
+                    widget.item.type.name != 'energyBalance')
+                  SvgPicture.asset(
+                    widget.item.svgAsset,
+                    width: 24,
+                    height: 24,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.white,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    widget.item.id,
+                    overflow: TextOverflow.ellipsis,
+                    style: CustomTheme(context).themeData.textTheme.labelLarge
+                        ?.copyWith(color: CustomColors.light),
+                  ),
+                ),
+                const Icon(
+                  Icons.chevron_right,
+                  color: CustomColors.light600,
+                  size: 20,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          if (widget.item.type.name == 'smartMode') Smartmode(size: size),
+          if (isEnergyUsage) EnergyUsage(size: size),
+        ],
+      ),
     );
   }
 }
