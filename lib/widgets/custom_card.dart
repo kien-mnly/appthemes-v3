@@ -19,7 +19,6 @@ class CustomCard extends StatelessWidget {
 
     this.useGlassEffect = true,
     this.blurSigma = 10,
-    this.glassBackground,
     this.splashColor,
     this.highlightColor,
     super.key,
@@ -37,7 +36,6 @@ class CustomCard extends StatelessWidget {
 
   final bool useGlassEffect;
   final double blurSigma;
-  final Color? glassBackground;
   final Color? splashColor;
   final Color? highlightColor;
 
@@ -51,7 +49,7 @@ class CustomCard extends StatelessWidget {
     );
 
     Widget content = Material(
-      color: useGlassEffect ? Colors.black.withValues(alpha: 0.25) : background,
+      color: useGlassEffect ? Colors.black.withValues(alpha: 0.35) : background,
       shape: shape,
       child: InkWell(
         customBorder: SmoothRectangleBorder(

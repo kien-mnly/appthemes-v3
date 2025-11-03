@@ -3,6 +3,7 @@ import 'package:appthemes_v3/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:appthemes_v3/widgets/theme_settings_modal.dart';
 import 'package:appthemes_v3/widgets/widget_list.dart';
+import 'package:appthemes_v3/widgets/widget_modal.dart';
 import 'package:appthemes_v3/widgets/edit_toolbar.dart';
 import '../config/theme/custom_colors.dart';
 import '../widgets/bottom_modal.dart';
@@ -10,7 +11,7 @@ import 'package:appthemes_v3/widgets/dashboard.dart';
 import 'package:appthemes_v3/models/widget_config.dart';
 import 'package:appthemes_v3/models/widget_item.dart';
 import 'package:appthemes_v3/models/enums/widget_type.dart';
-import 'package:appthemes_v3/widgets/widget_modal.dart';
+import 'package:appthemes_v3/services/dashboard_storage.dart';
 
 class StartView extends StatefulWidget {
   const StartView({super.key});
@@ -24,6 +25,23 @@ class _StartViewState extends State<StartView> {
   int selectedThemeIndex = 2;
 
   final List<WidgetConfig> _dashboardItems = [];
+  final DashboardStorage _storage = DashboardStorage();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDashboard();
+  }
+
+  Future<void> _loadDashboard() async {
+    final stored = await _storage.load();
+    if (!mounted) return;
+    setState(() {
+      _dashboardItems
+        ..clear()
+        ..addAll(stored.where((cfg) => resolveItem(cfg.itemId) != null));
+    });
+  }
 
   WidgetItem? resolveItem(String itemId) {
     try {
@@ -40,6 +58,7 @@ class _StartViewState extends State<StartView> {
       final item = _dashboardItems.removeAt(oldIndex);
       _dashboardItems.insert(newIndex, item);
     });
+    _storage.save(_dashboardItems);
   }
 
   void onAddWidget(WidgetItem item, int selectedIndex) {
@@ -48,9 +67,29 @@ class _StartViewState extends State<StartView> {
       itemId: item.id,
       selectedIndex: selectedIndex,
       size: item.supportedSizes[selectedIndex],
-      meta: {},
     );
     setState(() => _dashboardItems.add(newConfig));
+    _storage.save(_dashboardItems);
+  }
+
+  void _openAddWidget() {
+    BottomDialog.showCustom(
+      context: context,
+      child: WidgetList(
+        onPick: (WidgetItem item) {
+          Navigator.pop(context); // close list
+          BottomDialog.showCustom(
+            context: context,
+            child: WidgetModal(
+              item: item,
+              onAdd: (pickedItem, selectedIndex) {
+                onAddWidget(pickedItem, selectedIndex);
+              },
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -61,75 +100,53 @@ class _StartViewState extends State<StartView> {
         IconButton(
           icon: Icon(isEditMode ? Icons.close : Icons.edit),
           color: CustomColors.light,
-          onPressed: () async {
-            if (!isEditMode) {
-              setState(() => isEditMode = true);
-
-              await showModalBottomSheet(
-                context: context,
-                backgroundColor: Colors.transparent,
-                barrierColor: Colors.transparent,
-                builder: (_) => EditToolbar(
-                  onSave: () {
-                    // Implement save functionality
-                  },
-                  onAddWidget: () {
-                    BottomDialog.showCustom(
-                      context: context,
-                      child: WidgetList(
-                        onPick: (WidgetItem item) {
-                          Navigator.pop(context);
-                          BottomDialog.showCustom(
-                            context: context,
-                            child: WidgetModal(
-                              item: item,
-                              onAdd: (item, selectedIndex) {
-                                onAddWidget(item, selectedIndex);
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                  onOpenSettings: () {
-                    BottomDialog.showCustom(
-                      context: context,
-                      child: ThemeSettingsModal(
-                        selectedThemeIndex: selectedThemeIndex,
-                        onThemeChange: (index) {
-                          setState(() {
-                            selectedThemeIndex = index;
-                          });
-                        },
-                        onExit: () {},
-                      ),
-                    );
-                  },
-                ),
-              );
-
-              if (!mounted) return;
-              setState(() => isEditMode = false);
-            } else {
-              setState(() => isEditMode = false);
-            }
+          onPressed: () {
+            setState(() => isEditMode = !isEditMode);
           },
         ),
       ],
-
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Dashboard(
-            items: _dashboardItems,
-            isEditMode: isEditMode,
-            onReorder: onReorder,
-            resolveItem: resolveItem,
-          ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(22),
+              child: Dashboard(
+                items: _dashboardItems,
+                isEditMode: isEditMode,
+                onReorder: onReorder,
+                resolveItem: resolveItem,
+              ),
+            ),
+            if (isEditMode)
+              SafeArea(
+                bottom: true,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: EditToolbar(
+                    onSave: () {
+                      _storage.save(_dashboardItems);
+                      setState(() => isEditMode = false);
+                    },
+                    onCancel: () => setState(() => isEditMode = false),
+                    onAddWidget: _openAddWidget,
+                    onOpenSettings: () {
+                      BottomDialog.showCustom(
+                        context: context,
+                        child: ThemeSettingsModal(
+                          selectedThemeIndex: selectedThemeIndex,
+                          onThemeChange: (index) {
+                            setState(() => selectedThemeIndex = index);
+                          },
+                          onExit: () {},
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
-
       bottomNavigationBar: const SizedBox.shrink(),
     );
   }

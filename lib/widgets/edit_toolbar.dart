@@ -7,11 +7,13 @@ class EditToolbar extends StatefulWidget {
   const EditToolbar({
     super.key,
     required this.onSave,
+    required this.onCancel,
     required this.onAddWidget,
     required this.onOpenSettings,
   });
 
   final VoidCallback onSave;
+  final VoidCallback onCancel;
   final VoidCallback onAddWidget;
   final VoidCallback onOpenSettings;
 

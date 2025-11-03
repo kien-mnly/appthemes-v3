@@ -29,7 +29,6 @@ extension WidgetTypeData on WidgetType {
           svgAsset: AssetIcons.smartMode,
           type: this,
           supportedSizes: [
-            WidgetSize.compact,
             WidgetSize.regular,
             WidgetSize.long,
             WidgetSize.large,
@@ -41,7 +40,7 @@ extension WidgetTypeData on WidgetType {
           svgAsset: AssetIcons.lineChart,
           type: this,
           supportedSizes: [
-            WidgetSize.compact,
+            WidgetSize.long,
             WidgetSize.regular,
             WidgetSize.large,
           ],
@@ -63,7 +62,6 @@ extension WidgetTypeData on WidgetType {
           svgAsset: AssetIcons.coins,
           type: this,
           supportedSizes: [
-            WidgetSize.compact,
             WidgetSize.regular,
             WidgetSize.long,
             WidgetSize.large,
@@ -82,7 +80,6 @@ extension WidgetTypeData on WidgetType {
           svgAsset: AssetIcons.batteryFull,
           type: this,
           supportedSizes: [
-            WidgetSize.compact,
             WidgetSize.regular,
             WidgetSize.long,
             WidgetSize.large,

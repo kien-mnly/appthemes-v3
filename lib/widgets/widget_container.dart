@@ -1,14 +1,14 @@
 import 'package:appthemes_v3/config/theme/custom_colors.dart';
-import 'package:appthemes_v3/widgets/energy_usage/energy_usage.dart';
+import 'package:appthemes_v3/widgets/dashboard_widgets/energy_usage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:appthemes_v3/models/enums/widget_size.dart';
 import 'package:appthemes_v3/models/widget_item.dart';
 import '../config/theme/custom_theme.dart';
 import 'custom_card.dart';
-import 'battery_bundle/battery_bundle_large.dart';
-import 'battery_bundle/battery_bundle_xl.dart';
-import 'smartmode/smartmode.dart';
+import 'dashboard_widgets/battery_bundle/battery_bundle_large.dart';
+import 'dashboard_widgets/battery_bundle/battery_bundle_xl.dart';
+import 'dashboard_widgets/smartmode.dart';
 
 class WidgetContainer extends StatefulWidget {
   final WidgetItem item;
@@ -47,12 +47,11 @@ class _WidgetContainerState extends State<WidgetContainer> {
     final maxHeight = 300.0;
     final sizes = widget.item.supportedSizes;
 
-    // Content mode: render a single card at the chosen size, no pager/labels.
     if (!widget.preview) {
       final WidgetSize size =
           widget.fixedSize ??
           sizes[(widget.initialIndex).clamp(0, sizes.length - 1)];
-      return _buildSingle(size);
+      return containerContent(size);
     }
 
     return Column(
@@ -68,9 +67,7 @@ class _WidgetContainerState extends State<WidgetContainer> {
             },
             itemBuilder: (context, index) {
               final size = sizes[index];
-
-              // Use the same render path for all types; add a size label below.
-              final content = _buildSingle(size);
+              final content = containerContent(size);
 
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -106,7 +103,7 @@ class _WidgetContainerState extends State<WidgetContainer> {
     );
   }
 
-  Widget _buildSingle(WidgetSize size) {
+  Widget containerContent(WidgetSize size) {
     final isBatteryBundle = widget.item.type.name == 'batteryBundle';
     if (isBatteryBundle) {
       return size == WidgetSize.extraLarge

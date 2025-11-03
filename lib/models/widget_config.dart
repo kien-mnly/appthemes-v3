@@ -5,14 +5,12 @@ class WidgetConfig {
   final String itemId;
   final WidgetSize size;
   final int selectedIndex;
-  final Map<String, dynamic>? meta;
 
   const WidgetConfig({
     required this.id,
     required this.itemId,
     required this.size,
     required this.selectedIndex,
-    required this.meta,
   });
 
   WidgetConfig copyWith({
@@ -21,14 +19,31 @@ class WidgetConfig {
     String? titleKey,
     WidgetSize? size,
     int? selectedIndex,
-    Map<String, dynamic>? meta,
   }) {
     return WidgetConfig(
       id: id ?? this.id,
       itemId: itemId ?? this.itemId,
       size: size ?? this.size,
       selectedIndex: selectedIndex ?? this.selectedIndex,
-      meta: meta ?? this.meta,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'itemId': itemId,
+    'size': size.name,
+    'selectedIndex': selectedIndex,
+  };
+
+  factory WidgetConfig.fromJson(Map<String, dynamic> json) {
+    return WidgetConfig(
+      id: json['id'],
+      itemId: json['itemId'],
+      size: WidgetSize.values.firstWhere(
+        (widgetSize) => widgetSize.name == json['size'],
+        orElse: () => WidgetSize.regular,
+      ),
+      selectedIndex: json['selectedIndex'],
     );
   }
 }

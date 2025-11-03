@@ -21,34 +21,36 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final children = items.map((dashboardItem) {
+      final item = resolveItem(dashboardItem.itemId);
+      return SizedBox(
+        key: ValueKey(dashboardItem.id),
+        child: WidgetContainer(
+          item: item!,
+          preview: false,
+          fixedSize: dashboardItem.size,
+          initialIndex: dashboardItem.selectedIndex,
+        ),
+      );
+    }).toList();
+
     return SingleChildScrollView(
-      child: ReorderableWrap(
-        spacing: gap,
-        runSpacing: gap,
-        needsLongPressDraggable: isEditMode,
-        onReorder: (oldIndex, newIndex) => {
-          if (isEditMode) onReorder(oldIndex, newIndex),
-        },
-        buildDraggableFeedback: (context, constraints, child) {
-          return Material(
-            elevation: 6.0,
-            color: Colors.transparent,
-            child: child,
-          );
-        },
-        children: items.map((cfg) {
-          final item = resolveItem(cfg.itemId);
-          return SizedBox(
-            key: ValueKey(cfg.id),
-            child: WidgetContainer(
-              item: item!,
-              preview: false,
-              fixedSize: cfg.size,
-              initialIndex: cfg.selectedIndex,
-            ),
-          );
-        }).toList(),
-      ),
+      child: isEditMode
+          ? ReorderableWrap(
+              spacing: gap,
+              runSpacing: gap,
+              needsLongPressDraggable: true,
+              onReorder: onReorder,
+              buildDraggableFeedback: (context, constraints, child) {
+                return Material(
+                  elevation: 6.0,
+                  type: MaterialType.transparency,
+                  child: child,
+                );
+              },
+              children: children,
+            )
+          : Wrap(spacing: gap, runSpacing: gap, children: children),
     );
   }
 }
