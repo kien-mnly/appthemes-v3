@@ -1,4 +1,5 @@
 import 'package:appthemes_v3/config/theme/custom_colors.dart';
+import 'package:appthemes_v3/widgets/energy_usage/energy_usage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:appthemes_v3/models/enums/widget_size.dart';
@@ -87,49 +88,61 @@ class _WidgetContainerState extends State<WidgetContainer> {
                     width: size.width,
                     height: size.height,
                     borderRadius: 24,
-                    padding: const EdgeInsets.all(12),
+                    padding:
+                        (widget.item.type.name == 'energyUsage' &&
+                                size == WidgetSize.large ||
+                            size == WidgetSize.regular)
+                        ? EdgeInsets.zero
+                        : const EdgeInsets.all(12),
                     useGlassEffect: true,
                     background: CustomColors.dark700,
                     child: Column(
                       children: [
-                        Row(
-                          children: [
-                            if (widget.item.type.name != 'smartMode' &&
-                                widget.item.type.name != 'energyUsage' &&
-                                widget.item.type.name != 'energyBalance')
-                              SvgPicture.asset(
-                                widget.item.svgAsset,
-                                width: 24,
-                                height: 24,
-                                colorFilter: const ColorFilter.mode(
-                                  Colors.white,
-                                  BlendMode.srcIn,
+                        Padding(
+                          padding: (widget.item.type.name == 'energyUsage')
+                              ? EdgeInsets.all(12)
+                              : EdgeInsets.zero,
+                          child: Row(
+                            children: [
+                              if (widget.item.type.name != 'smartMode' &&
+                                  widget.item.type.name != 'energyUsage' &&
+                                  widget.item.type.name != 'energyBalance')
+                                SvgPicture.asset(
+                                  widget.item.svgAsset,
+                                  width: 24,
+                                  height: 24,
+                                  colorFilter: const ColorFilter.mode(
+                                    Colors.white,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  widget.item.id,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: CustomTheme(context)
+                                      .themeData
+                                      .textTheme
+                                      .labelLarge
+                                      ?.copyWith(color: CustomColors.light),
                                 ),
                               ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                widget.item.id,
-                                overflow: TextOverflow.ellipsis,
-                                style: CustomTheme(context)
-                                    .themeData
-                                    .textTheme
-                                    .labelLarge
-                                    ?.copyWith(color: CustomColors.light),
+                              const Icon(
+                                Icons.chevron_right,
+                                color: CustomColors.light600,
+                                size: 20,
                               ),
-                            ),
-                            const Icon(
-                              Icons.chevron_right,
-                              color: CustomColors.light600,
-                              size: 20,
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 8),
                         if (widget.item.type.name == 'smartMode')
                           Smartmode(size: size),
                         if (widget.item.type.name == 'batteryBundle')
                           BatteryBundleLarge(item: widget.item, size: size),
+                        if (widget.item.type.name == 'energyUsage')
+                          EnergyUsage(size: size),
                       ],
                     ),
                   ),
