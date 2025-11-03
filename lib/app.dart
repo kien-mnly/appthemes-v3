@@ -2,8 +2,6 @@ import 'dart:async';
 
 import './config/theme/custom_theme.dart';
 import './views/start_view.dart';
-
-import 'widgets/bottom_modal.dart';
 import 'package:flutter/material.dart';
 
 class App extends StatefulWidget {

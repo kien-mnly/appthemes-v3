@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:appthemes_v3/config/theme/asset_icons.dart';
 import 'package:appthemes_v3/config/theme/custom_colors.dart';
 
 Widget batteryHeaderIcon(String asset, {double size = 18}) => SvgPicture.asset(

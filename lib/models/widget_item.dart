@@ -1,4 +1,3 @@
-import '../models/widget_card.dart';
 import '../models/enums/widget_type.dart';
 import '../models/enums/widget_size.dart';
 
