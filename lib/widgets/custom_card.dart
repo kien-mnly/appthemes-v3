@@ -8,7 +8,7 @@ class CustomCard extends StatelessWidget {
   const CustomCard({
     required this.child,
     this.background = CustomColors.dark,
-    this.borderSide = const BorderSide(color: CustomColors.dark700),
+    this.borderSide = const BorderSide(color: CustomColors.dark600),
     this.padding = const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
     this.borderRadius = 25,
     this.shadows = const [],
@@ -49,7 +49,7 @@ class CustomCard extends StatelessWidget {
     );
 
     Widget content = Material(
-      color: useGlassEffect ? Colors.black.withValues(alpha: 0.35) : background,
+      color: useGlassEffect ? Colors.black.withValues(alpha: 0.25) : background,
       shape: shape,
       child: InkWell(
         customBorder: SmoothRectangleBorder(

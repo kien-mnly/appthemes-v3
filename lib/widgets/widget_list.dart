@@ -44,7 +44,7 @@ class _WidgetListState extends State<WidgetList> {
           shrinkWrap: true,
           physics: const AlwaysScrollableScrollPhysics(),
           itemCount: _items.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 8),
+          separatorBuilder: (context, index) => const SizedBox(height: 8),
           itemBuilder: (context, index) {
             final item = _items[index];
             return GestureDetector(

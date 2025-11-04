@@ -71,13 +71,34 @@ class _StartViewState extends State<StartView> {
   }
 
   void onAddWidget(WidgetItem item, int selectedIndex) {
-    final newConfig = WidgetConfig(
-      id: UniqueKey().toString(),
-      itemId: item.id,
-      selectedIndex: selectedIndex,
-      size: item.supportedSizes[selectedIndex],
+    final newItem = item.supportedSizes[selectedIndex];
+    final existingItem = _dashboardItems.indexWhere(
+      (current) => current.itemId == item.id,
     );
-    setState(() => _dashboardItems.add(newConfig));
+    if (existingItem != 1) {
+      final newConfig = WidgetConfig(
+        id: UniqueKey().toString(),
+        itemId: item.id,
+        selectedIndex: selectedIndex,
+        size: item.supportedSizes[selectedIndex],
+      );
+      setState(() => _dashboardItems.add(newConfig));
+      _storage.save(_dashboardItems);
+      return;
+    }
+
+    final existing = _dashboardItems[existingItem];
+
+    final updatedConfig = WidgetConfig(
+      id: existing.id,
+      itemId: existing.itemId,
+      selectedIndex: selectedIndex,
+      size: newItem,
+    );
+
+    setState(() {
+      _dashboardItems[existingItem] = updatedConfig;
+    });
     _storage.save(_dashboardItems);
   }
 
@@ -86,7 +107,7 @@ class _StartViewState extends State<StartView> {
       context: context,
       child: WidgetList(
         onPick: (WidgetItem item) {
-          Navigator.pop(context); // close list
+          Navigator.pop(context);
           BottomDialog.showCustom(
             context: context,
             child: WidgetModal(

@@ -20,7 +20,8 @@ class AnimatedFlowBar extends StatefulWidget {
   State<AnimatedFlowBar> createState() => _AnimatedFlowBarState();
 }
 
-class _AnimatedFlowBarState extends State<AnimatedFlowBar> with SingleTickerProviderStateMixin {
+class _AnimatedFlowBarState extends State<AnimatedFlowBar>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _positionAnimation;
 
@@ -56,7 +57,8 @@ class _AnimatedFlowBarState extends State<AnimatedFlowBar> with SingleTickerProv
   @override
   void didUpdateWidget(covariant AnimatedFlowBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.direction != widget.direction || oldWidget.axis != widget.axis) {
+    if (oldWidget.direction != widget.direction ||
+        oldWidget.axis != widget.axis) {
       _initAnimation();
     }
   }
@@ -69,7 +71,9 @@ class _AnimatedFlowBarState extends State<AnimatedFlowBar> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    final size = widget.axis == Axis.vertical ? Size(dotSize, barLength) : Size(barLength, dotSize);
+    final size = widget.axis == Axis.vertical
+        ? Size(dotSize, barLength)
+        : Size(barLength, dotSize);
 
     return SizedBox(
       height: size.height,
@@ -90,7 +94,11 @@ class _AnimatedFlowBarState extends State<AnimatedFlowBar> with SingleTickerProv
           AnimatedBuilder(
             animation: _positionAnimation,
             builder: (context, child) {
-              double offset = -dotSize + _positionAnimation.value * (barLength + dotSize); // add the size of the dot to the offset for better visual flow
+              double offset =
+                  -dotSize +
+                  _positionAnimation.value *
+                      (barLength +
+                          dotSize); // add the size of the dot to the offset for better visual flow
 
               return Positioned(
                 bottom: widget.axis == Axis.vertical ? offset : null,
