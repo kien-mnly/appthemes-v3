@@ -1,9 +1,10 @@
-import 'dart:ui';
+import 'package:appthemes_v3/config/dependency_config.dart';
 import 'package:flutter/cupertino.dart';
 import '../config/theme/custom_colors.dart';
-import '../config/theme/custom_background.dart';
+import '../models/enums/background_theme.dart';
 import '../widgets/button.dart';
 import '../config/theme/custom_painter.dart';
+import 'package:appthemes_v3/services/background_service.dart';
 
 class ThemeSettingsModal extends StatefulWidget {
   const ThemeSettingsModal({
@@ -23,11 +24,12 @@ class ThemeSettingsModal extends StatefulWidget {
 
 class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
   late int currentIndex;
+  late final BackgroundService selectTheme = locator<BackgroundService>();
 
   @override
   void initState() {
     super.initState();
-    currentIndex = widget.selectedThemeIndex;
+    currentIndex = selectTheme.preferredTheme.index;
   }
 
   @override
@@ -62,8 +64,8 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ...List.generate(customBackgrounds.length, (index) {
-              final theme = customBackgrounds[index];
+            ...List.generate(BackgroundTheme.values.length - 1, (index) {
+              final theme = BackgroundTheme.values[index];
               final isSelected = index == currentIndex;
               return GestureDetector(
                 onTap: () {
@@ -71,9 +73,9 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
                     setState(() {
                       currentIndex = index;
                     });
-                    (() => currentIndex = index);
                   }
-                  widget.onThemeChange(index);
+                  selectTheme.preferredTheme =
+                      BackgroundTheme.values[currentIndex];
                 },
                 child: SizedBox(
                   width: 78,
@@ -95,8 +97,10 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
                         children: [
                           CustomPaint(
                             painter: ThemeSelector(
-                              backgroundColors: theme.backgroundColors,
-                              elementColors: theme.elementColors,
+                              backgroundColors:
+                                  theme.customBackground.backgroundColors,
+                              elementColors:
+                                  theme.customBackground.elementColors,
                               elementOpacity: 0.42,
                             ),
                           ),
@@ -109,7 +113,7 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
             }),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         Button(
           title: 'Huidige Dashboard Thema placeholder',
           onPressed: () {
@@ -119,16 +123,17 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
           },
           type: ButtonType.outline,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         Button(
           title: 'Opslaan',
           onPressed: () {
+            selectTheme.preferredTheme = BackgroundTheme.values[currentIndex];
             widget.onThemeChange(currentIndex);
             widget.onExit();
             Navigator.of(context).pop();
           },
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         Button(
           title: 'Annuleren',
           onPressed: () {
@@ -138,6 +143,7 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
           },
           type: ButtonType.secondary,
         ),
+        const SizedBox(height: 24),
       ],
     );
   }

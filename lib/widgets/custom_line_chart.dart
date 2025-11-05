@@ -1,9 +1,12 @@
+import 'package:appthemes_v3/config/dependency_config.dart';
 import 'package:appthemes_v3/config/theme/asset_icons.dart';
 import 'package:appthemes_v3/config/theme/custom_colors.dart';
 import 'package:appthemes_v3/config/theme/custom_theme.dart';
+import 'package:appthemes_v3/services/background_service.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:watch_it/watch_it.dart';
 
 class CustomLineChartDataPoint {
   final FlSpot spot;
@@ -12,7 +15,7 @@ class CustomLineChartDataPoint {
   CustomLineChartDataPoint({required this.spot, this.tooltip});
 }
 
-class CustomLineChart extends StatelessWidget {
+class CustomLineChart extends WatchingWidget {
   const CustomLineChart({
     super.key,
     required this.data,
@@ -45,6 +48,7 @@ class CustomLineChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int? lastTouchedIndex;
+    final accent = watch(locator<BackgroundService>()).current.accentColor;
 
     double getMaxY() {
       return data.map((point) => point.spot.y).reduce((a, b) => a > b ? a : b);
@@ -58,7 +62,7 @@ class CustomLineChart extends StatelessWidget {
       LineChartBarData(
         dotData: dotData,
         spots: data.map((point) => point.spot).toList(),
-        color: CustomColors.green300,
+        color: accent,
         barWidth: barWidth,
         isStepLineChart: isStepLineChart,
         isCurved: isCurved,
@@ -67,8 +71,8 @@ class CustomLineChart extends StatelessWidget {
           show: true,
           gradient: LinearGradient(
             colors: [
-              CustomColors.green300.withValues(alpha: 0.05),
-              CustomColors.green300.withValues(alpha: 0.35),
+              accent.withValues(alpha: 0.05),
+              accent.withValues(alpha: 0.35),
             ],
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
@@ -87,10 +91,7 @@ class CustomLineChart extends StatelessWidget {
                 children: [
                   SvgPicture.asset(
                     AssetIcons.chevronDown,
-                    colorFilter: ColorFilter.mode(
-                      CustomColors.green300,
-                      BlendMode.srcIn,
-                    ),
+                    colorFilter: ColorFilter.mode(accent, BlendMode.srcIn),
                     height: 12,
                   ),
                   const SizedBox(width: 2),

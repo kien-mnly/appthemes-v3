@@ -1,17 +1,18 @@
 import 'dart:io';
 
+import 'package:appthemes_v3/config/dependency_config.dart';
+import 'package:appthemes_v3/services/background_service.dart';
 import 'package:flutter/material.dart';
+import 'package:watch_it/watch_it.dart';
 
 enum AnimationDirection { forward, backward }
 
-class AnimatedFlowBar extends StatefulWidget {
-  final Color color;
+class AnimatedFlowBar extends StatefulWidget with WatchItStatefulWidgetMixin {
   final AnimationDirection direction;
   final Axis axis;
 
   const AnimatedFlowBar({
     super.key,
-    required this.color,
     this.direction = AnimationDirection.forward,
     this.axis = Axis.vertical,
   });
@@ -74,6 +75,7 @@ class _AnimatedFlowBarState extends State<AnimatedFlowBar>
     final size = widget.axis == Axis.vertical
         ? Size(dotSize, barLength)
         : Size(barLength, dotSize);
+    final accent = watch(locator<BackgroundService>()).current.accentColor;
 
     return SizedBox(
       height: size.height,
@@ -87,7 +89,7 @@ class _AnimatedFlowBarState extends State<AnimatedFlowBar>
             child: Container(
               height: widget.axis == Axis.vertical ? barLength : barThickness,
               width: widget.axis == Axis.vertical ? barThickness : barLength,
-              color: widget.color,
+              color: accent,
             ),
           ),
           // The animated dot
@@ -108,7 +110,7 @@ class _AnimatedFlowBarState extends State<AnimatedFlowBar>
                   height: dotSize,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: widget.color,
+                    color: accent,
                   ),
                 ),
               );

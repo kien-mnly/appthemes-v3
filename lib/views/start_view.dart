@@ -1,4 +1,3 @@
-import 'package:appthemes_v3/config/theme/custom_background.dart';
 import 'package:appthemes_v3/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:appthemes_v3/widgets/theme_settings_modal.dart';
@@ -75,7 +74,7 @@ class _StartViewState extends State<StartView> {
     final existingItem = _dashboardItems.indexWhere(
       (current) => current.itemId == item.id,
     );
-    if (existingItem != 1) {
+    if (existingItem == -1) {
       final newConfig = WidgetConfig(
         id: UniqueKey().toString(),
         itemId: item.id,
@@ -125,7 +124,6 @@ class _StartViewState extends State<StartView> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      background: customBackgrounds[selectedThemeIndex],
       actions: [
         IconButton(
           icon: Icon(isEditMode ? Icons.close : Icons.edit),

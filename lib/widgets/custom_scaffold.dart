@@ -1,40 +1,22 @@
 import 'dart:ui';
+
+import 'package:appthemes_v3/config/theme/custom_colors.dart';
+import 'package:appthemes_v3/config/theme/custom_theme.dart';
+import 'package:appthemes_v3/config/theme/size_setter.dart';
+import 'package:appthemes_v3/services/background_service.dart';
+import 'package:appthemes_v3/widgets/custom_safe_area.dart';
+import 'package:appthemes_v3/widgets/dashboard_background.dart';
+import 'package:appthemes_v3/config/dependency_config.dart';
+import 'package:appthemes_v3/models/enums/background_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../config/theme/custom_background.dart';
-import './custom_safe_area.dart';
-import 'dashboard_background.dart';
-import '../config/theme/custom_colors.dart';
-import '../config/theme/custom_theme.dart';
-import '../config/theme/size_setter.dart';
+import 'package:watch_it/watch_it.dart';
 
-enum TitleSize { sm, md, lg, xl }
+enum TitleSize { sm, md, lg }
 
-class CustomScaffold extends StatelessWidget {
-  final Widget body;
-  final CustomBackground background;
-
-  final String? title;
-  final Widget? leading;
-  final String? subTitle;
-  final TitleSize titleSize;
-  final List<Widget>? actions;
-  final bool centerTitle;
-  final bool useAppBar;
-  final bool extendBodyBehindAppBar;
-  final bool blurBehindAppBar;
-
-  final bool bottom;
-  final double minBottomPadding;
-  final Widget? floatingNavigationBar;
-  final Widget? bottomNavigationBar;
-
-  final bool resizeToAvoidBottomInset;
-
+class CustomScaffold extends WatchingWidget {
   const CustomScaffold({
-    Key? key,
     required this.body,
-    required this.background,
     this.title,
     this.leading,
     this.subTitle,
@@ -47,27 +29,34 @@ class CustomScaffold extends StatelessWidget {
     this.extendBodyBehindAppBar = false,
     this.floatingNavigationBar,
     this.bottomNavigationBar,
-    this.resizeToAvoidBottomInset = false,
+    this.resizeToAvoidBottomInset = true,
     this.blurBehindAppBar = true,
-  }) : super(key: key);
+    super.key,
+  });
 
-  double _getTitleFontSize() {
-    switch (titleSize) {
-      case TitleSize.sm:
-        return 18;
-      case TitleSize.md:
-        return 22;
-      case TitleSize.lg:
-        return 26;
-      case TitleSize.xl:
-        return 30;
-    }
-  }
+  final Widget? title;
+  final Widget body;
+  final String? subTitle;
+  final Widget? leading;
+  final TitleSize titleSize;
+  final List<Widget>? actions;
+  final bool centerTitle;
+  final bool bottom;
+  final double minBottomPadding;
+  final bool useAppBar;
+  final bool extendBodyBehindAppBar;
+  final Widget? floatingNavigationBar;
+  final Widget? bottomNavigationBar;
+  final bool resizeToAvoidBottomInset;
+  final bool blurBehindAppBar;
 
   @override
   Widget build(BuildContext context) {
+    final currentBackgroundTheme = watch(
+      locator<BackgroundService>(),
+    ).preferredTheme;
     return DashboardBackground(
-      background: background,
+      background: currentBackgroundTheme.customBackground as dynamic,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         extendBodyBehindAppBar: extendBodyBehindAppBar,
@@ -78,6 +67,7 @@ class CustomScaffold extends StatelessWidget {
             : AppBar(
                 iconTheme: IconThemeData(color: CustomColors.light100),
                 backgroundColor: Colors.transparent,
+                foregroundColor: Colors.transparent,
                 centerTitle: centerTitle,
                 elevation: 0,
                 scrolledUnderElevation: 0,
@@ -97,18 +87,10 @@ class CustomScaffold extends StatelessWidget {
                         ),
                       )
                     : null,
-                title: title != null
-                    ? Text(
-                        title!,
-                        style: TextStyle(
-                          fontSize: _getTitleFontSize(),
-                          fontWeight: FontWeight.bold,
-                          color: CustomColors.light100,
-                        ),
-                      )
-                    : null,
+                title: title,
                 bottom: subTitle != null
                     ? PreferredSize(
+                        // Scale the height to account for accessibility text sizes
                         preferredSize: Size.fromHeight(
                           10 * MediaQuery.textScalerOf(context).scale(2),
                         ),
@@ -142,7 +124,6 @@ class CustomScaffold extends StatelessWidget {
                 ],
               ),
         body: CustomSafeArea(
-          top: !useAppBar,
           bottom: bottom,
           minBottomPadding: minBottomPadding,
           child: body,

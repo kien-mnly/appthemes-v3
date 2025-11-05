@@ -51,7 +51,6 @@ class BatteryBundleExtraLarge extends StatelessWidget {
               child: SizedBox(
                 height: gap,
                 child: AnimatedFlowBar(
-                  color: CustomColors.green300,
                   direction: AnimationDirection.backward,
                   axis: Axis.vertical,
                 ),
@@ -85,7 +84,6 @@ class BatteryBundleExtraLarge extends StatelessWidget {
                 SizedBox(
                   width: gap,
                   child: AnimatedFlowBar(
-                    color: CustomColors.green300,
                     direction: AnimationDirection.forward,
                     axis: Axis.horizontal,
                   ),

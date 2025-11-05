@@ -1,7 +1,6 @@
 import 'package:appthemes_v3/widgets/animated_flow_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:appthemes_v3/config/theme/asset_icons.dart';
-import 'package:appthemes_v3/config/theme/custom_colors.dart';
 import 'package:appthemes_v3/models/widget_item.dart';
 import 'package:appthemes_v3/models/enums/widget_size.dart';
 import 'package:appthemes_v3/widgets/dashboard_widgets/battery_bundle/widget_bundle.dart';
@@ -50,7 +49,6 @@ class BatteryBundleLarge extends StatelessWidget {
               child: SizedBox(
                 height: compactH,
                 child: AnimatedFlowBar(
-                  color: CustomColors.green300,
                   direction: AnimationDirection.forward,
                   axis: Axis.horizontal,
                 ),
@@ -76,7 +74,6 @@ class BatteryBundleLarge extends StatelessWidget {
                 SizedBox(
                   height: gap,
                   child: AnimatedFlowBar(
-                    color: CustomColors.green300,
                     direction: AnimationDirection.backward,
                     axis: Axis.vertical,
                   ),
