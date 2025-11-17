@@ -26,13 +26,19 @@ class BackgroundService extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Set a temporary preview theme without persisting it. Useful for modals.
+  set setPreviewTheme(BackgroundTheme theme) {
+    _currentBackgroundTheme = theme;
+    notifyListeners();
+  }
+
   set restorePreferredTheme(bool value) {
     _currentBackgroundTheme = _preferredTheme;
     notifyListeners();
   }
 
   Future<void> _savePreferredTheme(BackgroundTheme theme) {
-    return _storage.write(key: _storageKey, value: theme.index.toString());
+    return _storage.write(key: _storageKey, value: theme.toString());
   }
 
   // load preferred theme on startup

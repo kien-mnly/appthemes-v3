@@ -7,7 +7,6 @@ import 'package:appthemes_v3/services/background_service.dart';
 import 'package:appthemes_v3/widgets/custom_safe_area.dart';
 import 'package:appthemes_v3/widgets/dashboard_background.dart';
 import 'package:appthemes_v3/config/dependency_config.dart';
-import 'package:appthemes_v3/models/enums/background_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:watch_it/watch_it.dart';
@@ -52,11 +51,11 @@ class CustomScaffold extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentBackgroundTheme = watch(
+    final currentBackground = watch(
       locator<BackgroundService>(),
-    ).preferredTheme;
+    ).currentBackgroundTheme;
     return DashboardBackground(
-      background: currentBackgroundTheme.customBackground,
+      background: currentBackground,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         extendBodyBehindAppBar: extendBodyBehindAppBar,

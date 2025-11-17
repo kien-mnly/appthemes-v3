@@ -1,15 +1,9 @@
 import 'package:appthemes_v3/config/theme/custom_colors.dart';
-import 'package:appthemes_v3/models/enums/widget_type.dart';
-import 'package:appthemes_v3/widgets/dashboard_widgets/energy_usage.dart';
+import 'package:appthemes_v3/widgets/widget_content.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:appthemes_v3/models/enums/widget_size.dart';
 import 'package:appthemes_v3/models/widget_item.dart';
 import '../config/theme/custom_theme.dart';
-import 'custom_card.dart';
-import 'dashboard_widgets/battery_bundle/battery_bundle_large.dart';
-import 'dashboard_widgets/battery_bundle/battery_bundle_xl.dart';
-import 'dashboard_widgets/smartmode.dart';
 
 class WidgetContainer extends StatefulWidget {
   final WidgetItem item;
@@ -52,13 +46,6 @@ class _WidgetContainerState extends State<WidgetContainer> {
     final maxHeight = 300.0;
     final sizes = widget.item.supportedSizes;
 
-    if (!widget.preview) {
-      final WidgetSize size =
-          widget.fixedSize ??
-          sizes[(widget.initialIndex).clamp(0, sizes.length - 1)];
-      return containerContent(size);
-    }
-
     return Column(
       children: [
         SizedBox(
@@ -72,7 +59,12 @@ class _WidgetContainerState extends State<WidgetContainer> {
             },
             itemBuilder: (context, index) {
               final size = sizes[index];
-              final content = containerContent(size);
+              final content = WidgetContent(
+                item: widget.item,
+                size: widget.fixedSize ?? size,
+                isEditMode: widget.isEditMode,
+                onDelete: widget.onDelete,
+              );
 
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -105,77 +97,6 @@ class _WidgetContainerState extends State<WidgetContainer> {
           }),
         ),
       ],
-    );
-  }
-
-  Widget containerContent(WidgetSize size) {
-    final isBatteryBundle = widget.item.type.name == 'batteryBundle';
-    if (isBatteryBundle) {
-      return size == WidgetSize.extraLarge
-          ? BatteryBundleExtraLarge(item: widget.item, size: size)
-          : BatteryBundleLarge(item: widget.item, size: size);
-    }
-
-    final isEnergyUsage = widget.item.type.name == 'energyUsage';
-    final isRegular = size == WidgetSize.regular;
-
-    return CustomCard(
-      width: size.width,
-      height: size.height,
-      borderRadius: 24,
-      padding: (isEnergyUsage && size == WidgetSize.large) || isRegular
-          ? EdgeInsets.zero
-          : const EdgeInsets.all(12),
-      useGlassEffect: true,
-      background: CustomColors.dark700,
-      child: Column(
-        children: [
-          Padding(
-            padding: isEnergyUsage ? const EdgeInsets.all(12) : EdgeInsets.zero,
-            child: Row(
-              children: [
-                if (widget.item.type.name != 'smartMode' &&
-                    widget.item.type.name != 'energyUsage' &&
-                    widget.item.type.name != 'energyBalance')
-                  SvgPicture.asset(
-                    widget.item.svgAsset,
-                    width: 24,
-                    height: 24,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.white,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    widget.item.id,
-                    overflow: TextOverflow.ellipsis,
-                    style: CustomTheme(context).themeData.textTheme.labelLarge
-                        ?.copyWith(color: CustomColors.light),
-                  ),
-                ),
-                widget.isEditMode
-                    ? IconButton(
-                        icon: const Icon(
-                          Icons.delete_outline,
-                          color: CustomColors.error,
-                        ),
-                        onPressed: widget.onDelete,
-                      )
-                    : const Icon(
-                        Icons.chevron_right,
-                        color: CustomColors.light600,
-                        size: 20,
-                      ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          if (widget.item.type == WidgetType.smartMode) Smartmode(size: size),
-          if (isEnergyUsage) EnergyUsage(size: size),
-        ],
-      ),
     );
   }
 }

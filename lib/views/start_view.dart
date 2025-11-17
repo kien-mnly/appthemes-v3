@@ -1,4 +1,6 @@
+import 'package:appthemes_v3/config/theme/custom_theme.dart';
 import 'package:appthemes_v3/widgets/custom_scaffold.dart';
+import 'package:appthemes_v3/widgets/theme_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:appthemes_v3/widgets/theme_settings_modal.dart';
 import 'package:appthemes_v3/widgets/widget_list.dart';
@@ -7,10 +9,12 @@ import 'package:appthemes_v3/widgets/edit_toolbar.dart';
 import '../config/theme/custom_colors.dart';
 import '../widgets/bottom_modal.dart';
 import 'package:appthemes_v3/widgets/dashboard.dart';
-import 'package:appthemes_v3/models/widget_config.dart';
+import 'package:appthemes_v3/models/dashboard_config.dart';
 import 'package:appthemes_v3/models/widget_item.dart';
 import 'package:appthemes_v3/models/enums/widget_type.dart';
 import 'package:appthemes_v3/services/dashboard_storage.dart';
+import 'package:appthemes_v3/views/widgets/floating_bottom_bar.dart';
+import 'package:appthemes_v3/config/theme/asset_icons.dart';
 
 class StartView extends StatefulWidget {
   const StartView({super.key});
@@ -22,8 +26,16 @@ class StartView extends StatefulWidget {
 class _StartViewState extends State<StartView> {
   bool isEditMode = false;
   int selectedThemeIndex = 2;
+  int selectedIndex = 1;
 
-  final List<WidgetConfig> _dashboardItems = [];
+  void onItemTapped(int index) {
+    if (!mounted) return;
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
+  final List<DashboardConfig> _dashboardItems = [];
   final DashboardStorage _storage = DashboardStorage();
 
   @override
@@ -75,7 +87,7 @@ class _StartViewState extends State<StartView> {
       (current) => current.itemId == item.id,
     );
     if (existingItem == -1) {
-      final newConfig = WidgetConfig(
+      final newConfig = DashboardConfig(
         id: UniqueKey().toString(),
         itemId: item.id,
         selectedIndex: selectedIndex,
@@ -88,7 +100,7 @@ class _StartViewState extends State<StartView> {
 
     final existing = _dashboardItems[existingItem];
 
-    final updatedConfig = WidgetConfig(
+    final updatedConfig = DashboardConfig(
       id: existing.id,
       itemId: existing.itemId,
       selectedIndex: selectedIndex,
@@ -121,9 +133,26 @@ class _StartViewState extends State<StartView> {
     );
   }
 
+  String getPageNameByIndex() {
+    switch (selectedIndex) {
+      case 0:
+        return 'statistics';
+      case 1:
+        return 'dashboard';
+      case 2:
+        return 'settings';
+      default:
+        return 'dashboard';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
+      title: Text(
+        getPageNameByIndex(),
+        style: CustomTheme(context).themeData.textTheme.headlineMedium,
+      ),
       actions: [
         IconButton(
           icon: Icon(isEditMode ? Icons.close : Icons.edit),
@@ -148,13 +177,31 @@ class _StartViewState extends State<StartView> {
             ),
             if (isEditMode)
               SafeArea(
-                bottom: true,
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: EditToolbar(
                     onSave: () {
-                      _storage.save(_dashboardItems);
-                      setState(() => isEditMode = false);
+                      BottomDialog.showCustom(
+                        context: context,
+                        child: ThemeModal(
+                          selectedThemeIndex: selectedThemeIndex,
+                          onThemeChange: (index) {
+                            setState(() {
+                              selectedThemeIndex = index;
+                            });
+                          },
+                          onPresetDashboard: (configs) {
+                            setState(() {
+                              _dashboardItems
+                                ..clear()
+                                ..addAll(configs);
+                              // Exit edit mode after applying preset dashboard
+                              isEditMode = false;
+                            });
+                            _storage.save(_dashboardItems);
+                          },
+                        ),
+                      );
                     },
                     onCancel: () => setState(() => isEditMode = false),
                     onAddWidget: _openAddWidget,
@@ -173,10 +220,31 @@ class _StartViewState extends State<StartView> {
                   ),
                 ),
               ),
+            if (!isEditMode)
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: FloatingBottomBar(
+                  selectedIndex: selectedIndex,
+                  onItemTapped: onItemTapped,
+                  items: [
+                    FloatingBottomBarItem(
+                      icon: AssetIcons.barChart,
+                      label: 'analytics',
+                    ),
+                    FloatingBottomBarItem(
+                      icon: AssetIcons.house,
+                      label: 'dashboard',
+                    ),
+                    FloatingBottomBarItem(
+                      icon: AssetIcons.settings,
+                      label: 'settings',
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
-      bottomNavigationBar: const SizedBox.shrink(),
     );
   }
 }

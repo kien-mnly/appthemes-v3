@@ -16,8 +16,10 @@ class AssetIcons {
   // existing icons in the real app
   static const String settings = '$_path/settings.svg';
   static const String chevronDown = '$_path/chevron-down.svg';
+  static const String chevronUp = '$_path/chevron-up.svg';
   static const String eyeSlash = '$_path/eye-slash.svg';
   static const String eye = '$_path/eye.svg';
   static const String plug = '$_path/plug.svg';
   static const String house = '$_path/house.svg';
+  static const String plus = '$_path/plus.svg';
 }

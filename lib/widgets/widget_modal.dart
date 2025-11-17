@@ -1,3 +1,4 @@
+import 'package:appthemes_v3/widgets/button.dart';
 import 'package:flutter/material.dart';
 import '../config/theme/custom_theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -51,12 +52,13 @@ class _WidgetModalState extends State<WidgetModal> {
         Row(
           children: [
             Expanded(
-              child: ElevatedButton(
+              child: Button(
+                title: 'Add Widget',
                 onPressed: () {
                   widget.onAdd!(widget.item, _selectedIndex);
                   Navigator.of(context).pop();
                 },
-                child: const Text('Add widget'),
+                type: ButtonType.primary,
               ),
             ),
           ],
