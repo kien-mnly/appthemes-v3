@@ -4,18 +4,9 @@ import 'dart:math' as math;
 
 /// Shared helper class for painting gradient background, circles and noise
 class PainterHelper {
-  static void drawBackground(
-    Canvas canvas,
-    Size size,
-    List<Color> backgroundColors,
-  ) {
+  static void drawBackground(Canvas canvas, Size size, Color backgroundColors) {
     final rect = Rect.fromLTWH(0, 0, size.width, size.height);
-    final paint = Paint()
-      ..shader = LinearGradient(
-        colors: backgroundColors,
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ).createShader(rect);
+    final paint = Paint()..color = backgroundColors;
     canvas.drawRect(rect, paint);
   }
 
@@ -108,7 +99,7 @@ class PainterHelper {
 }
 
 class DashboardPainter extends CustomPainter {
-  final List<Color> backgroundColors;
+  final Color backgroundColors;
   final List<Color> elementColors;
   final double elementOpacity;
 
@@ -153,7 +144,7 @@ class DashboardPainter extends CustomPainter {
 }
 
 class ThemeSelector extends CustomPainter {
-  final List<Color> backgroundColors;
+  final Color backgroundColors;
   final List<Color> elementColors;
   final double elementOpacity;
 

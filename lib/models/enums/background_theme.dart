@@ -8,11 +8,7 @@ extension BackgroundThemeExtension on BackgroundTheme {
     switch (this) {
       case BackgroundTheme.green:
         return CustomBackground(
-          backgroundColors: [
-            CustomColors.turqoise800.withValues(alpha: 0.75),
-            CustomColors.turqoise800,
-          ],
-          background: CustomColors.green800,
+          backgroundColor: CustomColors.turqoise800,
           elementColors: [
             CustomColors.turqoise800,
             CustomColors.turqoise800,
@@ -23,12 +19,7 @@ extension BackgroundThemeExtension on BackgroundTheme {
         );
       case BackgroundTheme.mutedGreen:
         return CustomBackground(
-          backgroundColors: [
-            CustomColors.dark800,
-            CustomColors.dark800.withValues(alpha: 0.75),
-          ],
-          background: CustomColors.black,
-          //requires 3 colors for better gradient effect
+          backgroundColor: CustomColors.dark800,
           elementColors: [
             CustomColors.dark800,
             CustomColors.dark800,
@@ -39,11 +30,7 @@ extension BackgroundThemeExtension on BackgroundTheme {
         );
       case BackgroundTheme.turquoise:
         return CustomBackground(
-          backgroundColors: [
-            CustomColors.turqoise800.withValues(alpha: 0.75),
-            CustomColors.turqoise800,
-          ],
-          background: CustomColors.green800,
+          backgroundColor: CustomColors.turqoise800,
           elementColors: [
             CustomColors.turqoise800,
             CustomColors.turqoise800,
@@ -54,11 +41,7 @@ extension BackgroundThemeExtension on BackgroundTheme {
         );
       case BackgroundTheme.mutedTurquoise:
         return CustomBackground(
-          backgroundColors: [
-            CustomColors.dark800.withValues(alpha: 0.75),
-            CustomColors.dark800,
-          ],
-          background: CustomColors.black,
+          backgroundColor: CustomColors.dark800,
           elementColors: [
             CustomColors.dark800,
             CustomColors.dark800,
@@ -69,11 +52,7 @@ extension BackgroundThemeExtension on BackgroundTheme {
         );
       case BackgroundTheme.error:
         return CustomBackground(
-          backgroundColors: [
-            CustomColors.dark800,
-            CustomColors.dark800.withValues(alpha: 0.75),
-          ],
-          background: CustomColors.black,
+          backgroundColor: CustomColors.dark800,
           elementColors: [
             CustomColors.dark800,
             CustomColors.dark800,

@@ -1,5 +1,4 @@
 import 'package:appthemes_v3/services/dashboard_storage.dart';
-import 'package:flutter/widgets.dart';
 import 'package:appthemes_v3/models/enums/background_theme.dart';
 import 'package:appthemes_v3/models/enums/widget_type.dart';
 import 'package:appthemes_v3/models/enums/widget_size.dart';

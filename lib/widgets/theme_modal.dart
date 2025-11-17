@@ -108,7 +108,7 @@ class _ThemeModalState extends State<ThemeModal> {
                               CustomPaint(
                                 painter: ThemeSelector(
                                   backgroundColors:
-                                      theme.customBackground.backgroundColors,
+                                      theme.customBackground.backgroundColor,
                                   elementColors:
                                       theme.customBackground.elementColors,
                                   elementOpacity: 0.42,
