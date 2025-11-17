@@ -1,26 +1,26 @@
 import './enums/widget_size.dart';
 
-class WidgetConfig {
+class DashboardConfig {
   final String id;
   final String itemId;
   final WidgetSize size;
   final int selectedIndex;
 
-  const WidgetConfig({
+  const DashboardConfig({
     required this.id,
     required this.itemId,
     required this.size,
     required this.selectedIndex,
   });
 
-  WidgetConfig copyWith({
+  DashboardConfig copyWith({
     String? id,
     String? itemId,
     String? titleKey,
     WidgetSize? size,
     int? selectedIndex,
   }) {
-    return WidgetConfig(
+    return DashboardConfig(
       id: id ?? this.id,
       itemId: itemId ?? this.itemId,
       size: size ?? this.size,
@@ -35,8 +35,8 @@ class WidgetConfig {
     'selectedIndex': selectedIndex,
   };
 
-  factory WidgetConfig.fromJson(Map<String, dynamic> json) {
-    return WidgetConfig(
+  factory DashboardConfig.fromJson(Map<String, dynamic> json) {
+    return DashboardConfig(
       id: json['id'],
       itemId: json['itemId'],
       size: WidgetSize.values.firstWhere(

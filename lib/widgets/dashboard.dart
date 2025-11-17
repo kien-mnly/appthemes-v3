@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reorderables/reorderables.dart';
 import 'package:appthemes_v3/config/constants/widget_constants.dart';
-import 'package:appthemes_v3/models/widget_config.dart';
+import 'package:appthemes_v3/models/dashboard_config.dart';
 import 'package:appthemes_v3/models/widget_item.dart';
 import 'package:appthemes_v3/widgets/widget_container.dart';
 
@@ -18,7 +18,7 @@ class Dashboard extends StatelessWidget {
   final bool isEditMode;
   final void Function(int oldIndex, int newIndex) onReorder;
   final WidgetItem? Function(String itemId) resolveItem;
-  final List<WidgetConfig> items;
+  final List<DashboardConfig> items;
   final void Function(String itemId) onDeleteItem;
 
   @override
@@ -39,22 +39,27 @@ class Dashboard extends StatelessWidget {
     }).toList();
 
     return SingleChildScrollView(
-      child: isEditMode
-          ? ReorderableWrap(
-              spacing: gap,
-              runSpacing: gap,
-              needsLongPressDraggable: true,
-              onReorder: onReorder,
-              buildDraggableFeedback: (context, constraints, child) {
-                return Material(
-                  elevation: 6.0,
-                  type: MaterialType.transparency,
-                  child: child,
-                );
-              },
-              children: children,
-            )
-          : Wrap(spacing: gap, runSpacing: gap, children: children),
+      child: Column(
+        children: [
+          isEditMode
+              ? ReorderableWrap(
+                  spacing: gap,
+                  runSpacing: gap,
+                  needsLongPressDraggable: true,
+                  onReorder: onReorder,
+                  buildDraggableFeedback: (context, constraints, child) {
+                    return Material(
+                      elevation: 6.0,
+                      type: MaterialType.transparency,
+                      child: child,
+                    );
+                  },
+                  children: children,
+                )
+              : Wrap(spacing: gap, runSpacing: gap, children: children),
+          SizedBox(height: 125),
+        ],
+      ),
     );
   }
 }
