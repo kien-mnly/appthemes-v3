@@ -8,8 +8,6 @@ extension BackgroundThemeExtension on BackgroundTheme {
     switch (this) {
       case BackgroundTheme.green:
         return CustomBackground(
-          id: 'bg0',
-          name: 'Green',
           backgroundColors: [
             CustomColors.turqoise800.withValues(alpha: 0.75),
             CustomColors.turqoise800,
@@ -25,8 +23,6 @@ extension BackgroundThemeExtension on BackgroundTheme {
         );
       case BackgroundTheme.mutedGreen:
         return CustomBackground(
-          id: 'bg1',
-          name: 'Dark-Green',
           backgroundColors: [
             CustomColors.dark800,
             CustomColors.dark800.withValues(alpha: 0.75),
@@ -43,8 +39,6 @@ extension BackgroundThemeExtension on BackgroundTheme {
         );
       case BackgroundTheme.turquoise:
         return CustomBackground(
-          id: 'bg2',
-          name: 'Turqoise',
           backgroundColors: [
             CustomColors.turqoise800.withValues(alpha: 0.75),
             CustomColors.turqoise800,
@@ -60,8 +54,6 @@ extension BackgroundThemeExtension on BackgroundTheme {
         );
       case BackgroundTheme.mutedTurquoise:
         return CustomBackground(
-          id: 'bg3',
-          name: 'Muted Turqoise',
           backgroundColors: [
             CustomColors.dark800.withValues(alpha: 0.75),
             CustomColors.dark800,
@@ -77,8 +69,6 @@ extension BackgroundThemeExtension on BackgroundTheme {
         );
       case BackgroundTheme.error:
         return CustomBackground(
-          id: 'bg4',
-          name: 'Error',
           backgroundColors: [
             CustomColors.dark800,
             CustomColors.dark800.withValues(alpha: 0.75),

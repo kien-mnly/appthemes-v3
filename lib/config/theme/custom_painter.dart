@@ -136,13 +136,13 @@ class DashboardPainter extends CustomPainter {
       circles: circles,
     );
 
-    PainterHelper.drawNoise(
-      canvas: canvas,
-      size: size,
-      strokeWidth: 0.65,
-      opacity: 0.35,
-      density: 1,
-    );
+    // PainterHelper.drawNoise(
+    //   canvas: canvas,
+    //   size: size,
+    //   strokeWidth: 0.65,
+    //   opacity: 0.35,
+    //   density: 1,
+    // );
   }
 
   @override
@@ -195,13 +195,13 @@ class ThemeSelector extends CustomPainter {
       },
     );
 
-    PainterHelper.drawNoise(
-      canvas: canvas,
-      size: size,
-      strokeWidth: 0.75,
-      opacity: 0.22,
-      density: 0.9,
-    );
+    // PainterHelper.drawNoise(
+    //   canvas: canvas,
+    //   size: size,
+    //   strokeWidth: 0.75,
+    //   opacity: 0.22,
+    //   density: 0.9,
+    // );
   }
 
   @override

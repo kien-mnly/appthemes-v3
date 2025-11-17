@@ -142,6 +142,4 @@ class SizeSetter {
         return 0;
     }
   }
-
-  static double? setTextSize(int i) {}
 }

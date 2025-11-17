@@ -11,8 +11,6 @@ class Smartmode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (size) {
-      case WidgetSize.compact:
-        return _buildCompact(context);
       case WidgetSize.regular:
         return _buildRegular(context);
       case WidgetSize.long:
@@ -24,19 +22,6 @@ class Smartmode extends StatelessWidget {
     }
   }
 
-  Widget _buildCompact(BuildContext context) => Row(
-    children: [
-      const SizedBox(width: 8),
-      const Icon(
-        Icons.battery_charging_full_rounded,
-        color: CustomColors.green300,
-        size: 16,
-      ),
-      const SizedBox(width: 8),
-      Text('Snel laden'),
-    ],
-  );
-
   Widget _buildRegular(BuildContext context) {
     final cards = [
       {'icon': Icons.battery_charging_full_rounded, 'text': 'Snel laden'},
@@ -45,7 +30,7 @@ class Smartmode extends StatelessWidget {
 
     return Column(
       children: [
-        const SizedBox(height: 16),
+        // const SizedBox(height: 8),
         Wrap(
           spacing: 12,
           runSpacing: 12,
@@ -81,7 +66,7 @@ class Smartmode extends StatelessWidget {
 
   Widget _buildLong(BuildContext context) => Row(
     children: [
-      const SizedBox(width: 8),
+      const SizedBox(width: 16),
       const Icon(
         Icons.battery_charging_full_rounded,
         color: CustomColors.green300,
@@ -102,7 +87,7 @@ class Smartmode extends StatelessWidget {
 
     return Column(
       children: [
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         Wrap(
           spacing: 12,
           runSpacing: 12,
