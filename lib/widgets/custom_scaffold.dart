@@ -56,12 +56,12 @@ class CustomScaffold extends WatchingWidget {
       locator<BackgroundService>(),
     ).preferredTheme;
     return DashboardBackground(
-      background: currentBackgroundTheme.customBackground as dynamic,
+      background: currentBackgroundTheme.customBackground,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         extendBodyBehindAppBar: extendBodyBehindAppBar,
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-        extendBody: true,
+        // extendBody: true,
         appBar: !useAppBar
             ? null
             : AppBar(

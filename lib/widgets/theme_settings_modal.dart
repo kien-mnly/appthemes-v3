@@ -34,6 +34,7 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
 
   @override
   Widget build(BuildContext context) {
+    final accent = selectTheme.currentBackgroundTheme.accentColor;
     return Column(
       children: [
         const SizedBox(height: 12),
@@ -84,9 +85,7 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25),
                       border: Border.all(
-                        color: isSelected
-                            ? CustomColors.green300
-                            : CustomColors.light,
+                        color: isSelected ? accent : CustomColors.light,
                         width: 1.25,
                       ),
                     ),

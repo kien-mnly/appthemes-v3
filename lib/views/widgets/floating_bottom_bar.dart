@@ -63,7 +63,9 @@ class _FloatingBottomBarState extends State<FloatingBottomBar> {
         15;
     final itemWidth =
         (MediaQuery.of(context).size.width - padding * 2) / widget.items.length;
-    final accent = watch(locator<BackgroundService>()).current.accentColor;
+    final accent = watch(
+      locator<BackgroundService>(),
+    ).currentBackgroundTheme.accentColor;
 
     return Padding(
       padding: EdgeInsets.symmetric(

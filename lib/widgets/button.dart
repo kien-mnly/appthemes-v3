@@ -1,5 +1,9 @@
 import 'dart:ui';
 
+import 'package:appthemes_v3/config/dependency_config.dart';
+import 'package:appthemes_v3/services/background_service.dart';
+import 'package:watch_it/watch_it.dart';
+
 import '../config/theme/custom_colors.dart';
 import '../config/theme/custom_theme.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +13,7 @@ enum ButtonType { primary, secondary, outline, danger }
 
 enum ButtonSize { sm, md }
 
-class Button extends StatelessWidget {
+class Button extends WatchingWidget {
   const Button({
     super.key,
     required this.title,
@@ -32,7 +36,9 @@ class Button extends StatelessWidget {
   Color getBackgroundColor(type) {
     switch (type) {
       case ButtonType.primary:
-        return CustomColors.green300;
+        return watch(
+          locator<BackgroundService>(),
+        ).currentBackgroundTheme.accentColor;
       case ButtonType.secondary:
         return CustomColors.black.withValues(alpha: 0.25);
       case ButtonType.outline:
@@ -61,6 +67,7 @@ class Button extends StatelessWidget {
     final borderRadius = BorderRadius.circular(100);
 
     Widget buttonContent = Container(
+      height: size == ButtonSize.md ? 48 : 36,
       width: size == ButtonSize.md ? double.infinity : null,
       decoration: BoxDecoration(borderRadius: borderRadius),
       child: Opacity(

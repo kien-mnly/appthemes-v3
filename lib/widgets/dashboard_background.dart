@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../config/theme/custom_background.dart';
+
 import '../config/theme/custom_painter.dart';
+import '../models/custom_background.dart';
 
 class DashboardBackground extends StatelessWidget {
   final CustomBackground background;

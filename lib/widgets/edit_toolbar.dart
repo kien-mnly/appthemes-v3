@@ -1,9 +1,12 @@
+import 'package:appthemes_v3/config/dependency_config.dart';
 import 'package:appthemes_v3/config/theme/asset_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:watch_it/watch_it.dart';
+import 'package:appthemes_v3/services/background_service.dart';
 import '../config/theme/custom_colors.dart';
 
-class EditToolbar extends StatefulWidget {
+class EditToolbar extends StatefulWidget with WatchItStatefulWidgetMixin {
   const EditToolbar({
     super.key,
     required this.onSave,
@@ -24,12 +27,15 @@ class EditToolbar extends StatefulWidget {
 class _EditToolbarState extends State<EditToolbar> {
   @override
   Widget build(BuildContext context) {
+    final accent = watch(
+      locator<BackgroundService>(),
+    ).currentBackgroundTheme.accentColor;
     final items = [
       _ToolbarItem(
         icon: SvgPicture.asset(
           AssetIcons.save,
-          width: 22,
-          height: 22,
+          width: 24,
+          height: 24,
           colorFilter: const ColorFilter.mode(
             CustomColors.light,
             BlendMode.srcIn,
@@ -40,46 +46,46 @@ class _EditToolbarState extends State<EditToolbar> {
         iconColor: CustomColors.light,
         textColor: CustomColors.light,
         onPressed: widget.onSave,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       ),
       _ToolbarItem(
         icon: SvgPicture.asset(
           AssetIcons.addWidget,
-          width: 22,
-          height: 22,
+          width: 24,
+          height: 24,
           colorFilter: const ColorFilter.mode(
             CustomColors.dark,
             BlendMode.srcIn,
           ),
         ),
         label: 'Voeg Widget toe',
-        bgColor: CustomColors.green300,
+        bgColor: accent,
         iconColor: CustomColors.dark,
         textColor: CustomColors.dark,
         onPressed: widget.onAddWidget,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
       ),
       _ToolbarItem(
         icon: SvgPicture.asset(
           AssetIcons.settings,
-          width: 22,
-          height: 22,
+          width: 24,
+          height: 24,
           colorFilter: const ColorFilter.mode(
             CustomColors.light,
             BlendMode.srcIn,
           ),
         ),
-        label: 'Instellingen',
+        label: 'Settings',
         bgColor: CustomColors.dark700,
         iconColor: CustomColors.light,
         textColor: CustomColors.light,
         onPressed: widget.onOpenSettings,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       ),
     ];
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: items,

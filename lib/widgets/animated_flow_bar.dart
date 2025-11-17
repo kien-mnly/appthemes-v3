@@ -75,7 +75,9 @@ class _AnimatedFlowBarState extends State<AnimatedFlowBar>
     final size = widget.axis == Axis.vertical
         ? Size(dotSize, barLength)
         : Size(barLength, dotSize);
-    final accent = watch(locator<BackgroundService>()).current.accentColor;
+    final accent = watch(
+      locator<BackgroundService>(),
+    ).currentBackgroundTheme.accentColor;
 
     return SizedBox(
       height: size.height,

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:appthemes_v3/models/custom_background.dart';
 import 'package:appthemes_v3/models/enums/background_theme.dart';
 import 'package:flutter/widgets.dart';
@@ -12,14 +11,8 @@ class BackgroundService extends ChangeNotifier {
 
   // current shown theme
   BackgroundTheme _currentBackgroundTheme = BackgroundTheme.green;
-  BackgroundTheme get currentBackgroundTheme => _currentBackgroundTheme;
-
-  set currentBackgroundTheme(BackgroundTheme theme) {
-    if (_currentBackgroundTheme != theme) {
-      _currentBackgroundTheme = theme;
-      notifyListeners();
-    }
-  }
+  CustomBackground get currentBackgroundTheme =>
+      _currentBackgroundTheme.customBackground;
 
   // user preferred theme
   BackgroundTheme _preferredTheme = BackgroundTheme.turquoise;
@@ -28,8 +21,13 @@ class BackgroundService extends ChangeNotifier {
   set preferredTheme(BackgroundTheme theme) {
     if (_preferredTheme == theme) return;
     _preferredTheme = theme;
-    currentBackgroundTheme = theme;
+    _currentBackgroundTheme = theme;
     _savePreferredTheme(theme);
+    notifyListeners();
+  }
+
+  set restorePreferredTheme(bool value) {
+    _currentBackgroundTheme = _preferredTheme;
     notifyListeners();
   }
 
@@ -37,39 +35,19 @@ class BackgroundService extends ChangeNotifier {
     return _storage.write(key: _storageKey, value: theme.index.toString());
   }
 
-  // stream for background changes
-  Stream<CustomBackground> get stream => _controller.stream;
-  CustomBackground get current => _currentBackgroundTheme.customBackground;
-
-  final ValueNotifier<CustomBackground> _selected =
-      ValueNotifier<CustomBackground>(
-        BackgroundTheme.turquoise.customBackground,
-      );
-  ValueNotifier<CustomBackground> get selected => _selected;
-
-  final StreamController<CustomBackground> _controller =
-      StreamController<CustomBackground>.broadcast();
-
+  // load preferred theme on startup
   Future<void> init() async {
     final String? storedValue = await _storage.read(key: _storageKey);
     final int? storedIndex = int.tryParse(storedValue ?? '');
-    if (storedIndex != null &&
-        storedIndex >= 0 &&
-        storedIndex < BackgroundTheme.values.length) {
+    if (storedIndex != null) {
       _preferredTheme = BackgroundTheme.values[storedIndex];
-    } else {
-      _preferredTheme = _currentBackgroundTheme;
     }
-    currentBackgroundTheme = _preferredTheme;
+    _currentBackgroundTheme = _preferredTheme;
   }
 
-  void errorTheme() {
-    if (_currentBackgroundTheme == BackgroundTheme.error) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_currentBackgroundTheme == BackgroundTheme.error) return;
-      currentBackgroundTheme = BackgroundTheme.error;
-    });
+  // miscellaneous
+  void setErrorTheme() {
+    _currentBackgroundTheme = BackgroundTheme.error;
+    notifyListeners();
   }
-
-  Color get accentColor => current.accentColor;
 }

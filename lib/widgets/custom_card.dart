@@ -49,7 +49,7 @@ class CustomCard extends StatelessWidget {
     );
 
     Widget content = Material(
-      color: useGlassEffect ? Colors.black.withValues(alpha: 0.25) : background,
+      color: useGlassEffect ? Colors.black.withValues(alpha: 0.35) : background,
       shape: shape,
       child: InkWell(
         customBorder: SmoothRectangleBorder(

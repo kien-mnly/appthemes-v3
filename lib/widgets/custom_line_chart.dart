@@ -48,7 +48,10 @@ class CustomLineChart extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     int? lastTouchedIndex;
-    final accent = watch(locator<BackgroundService>()).current.accentColor;
+    final accent = watch(
+      locator<BackgroundService>(),
+    ).currentBackgroundTheme.accentColor;
+    print(accent);
 
     double getMaxY() {
       return data.map((point) => point.spot.y).reduce((a, b) => a > b ? a : b);
