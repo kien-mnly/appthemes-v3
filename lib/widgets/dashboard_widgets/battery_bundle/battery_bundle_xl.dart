@@ -62,24 +62,21 @@ class BatteryBundleExtraLarge extends StatelessWidget {
             width: width,
             child: Row(
               children: [
-                SizedBox(
+                WidgetBundle(
+                  item: item,
                   width: halfW,
-                  child: WidgetBundle(
-                    item: item,
-                    width: halfW,
-                    height: compactWidgetHeight,
-                    headerTitle: 'Netwerk',
-                    headerIcon: SvgPicture.asset(
-                      AssetIcons.plug,
-                      width: 20,
-                      height: 20,
-                      colorFilter: const ColorFilter.mode(
-                        CustomColors.light,
-                        BlendMode.srcIn,
-                      ),
+                  height: compactWidgetHeight,
+                  headerTitle: 'Netwerk',
+                  headerIcon: SvgPicture.asset(
+                    AssetIcons.plug,
+                    width: 20,
+                    height: 20,
+                    colorFilter: const ColorFilter.mode(
+                      CustomColors.light,
+                      BlendMode.srcIn,
                     ),
-                    child: NetworkCompactContent(),
                   ),
+                  child: SizedBox(height: 24, child: NetworkCompactContent()),
                 ),
                 SizedBox(
                   width: gap,
@@ -88,24 +85,21 @@ class BatteryBundleExtraLarge extends StatelessWidget {
                     axis: Axis.horizontal,
                   ),
                 ),
-                SizedBox(
+                WidgetBundle(
+                  item: item,
                   width: halfW,
-                  child: WidgetBundle(
-                    item: item,
-                    width: halfW,
-                    height: compactWidgetHeight,
-                    headerTitle: 'Thuis',
-                    headerIcon: SvgPicture.asset(
-                      AssetIcons.house,
-                      width: 20,
-                      height: 20,
-                      colorFilter: const ColorFilter.mode(
-                        CustomColors.light,
-                        BlendMode.srcIn,
-                      ),
+                  height: compactWidgetHeight,
+                  headerTitle: 'Thuis',
+                  headerIcon: SvgPicture.asset(
+                    AssetIcons.house,
+                    width: 20,
+                    height: 20,
+                    colorFilter: const ColorFilter.mode(
+                      CustomColors.light,
+                      BlendMode.srcIn,
                     ),
-                    child: HomeCompactContent(),
                   ),
+                  child: SizedBox(height: 24, child: HomeCompactContent()),
                 ),
               ],
             ),

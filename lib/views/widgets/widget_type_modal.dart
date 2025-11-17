@@ -24,7 +24,6 @@ class _WidgetTypeModalState extends State<WidgetTypeModal> {
     );
     if (existingItem == -1) {
       final newConfig = DashboardConfig(
-        id: UniqueKey().toString(),
         itemId: item.id,
         selectedIndex: selectedIndex,
         size: item.supportedSizes[selectedIndex],
@@ -37,7 +36,6 @@ class _WidgetTypeModalState extends State<WidgetTypeModal> {
     final existing = _dashboardItems[existingItem];
 
     final updatedConfig = DashboardConfig(
-      id: existing.id,
       itemId: existing.itemId,
       selectedIndex: selectedIndex,
       size: newItem,

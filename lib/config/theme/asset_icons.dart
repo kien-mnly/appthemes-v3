@@ -12,6 +12,7 @@ class AssetIcons {
   static const String plant = '$_path/plant.svg';
   static const String smartMode = '$_path/smart-mode.svg';
   static const String zinVoltLogo = '$_path/zinvolt-logo.svg';
+  static const String paintBoard = '$_path/paint-board.svg';
 
   // existing icons in the real app
   static const String settings = '$_path/settings.svg';

@@ -1,8 +1,10 @@
+import 'package:appthemes_v3/services/dashboard_storage.dart';
 import 'package:flutter/widgets.dart';
 import 'package:appthemes_v3/models/enums/background_theme.dart';
 import 'package:appthemes_v3/models/enums/widget_type.dart';
 import 'package:appthemes_v3/models/enums/widget_size.dart';
 import 'package:appthemes_v3/models/dashboard_config.dart';
+import 'package:appthemes_v3/models/enums/usage_type.dart';
 
 class PresetWidgetConfig {
   final WidgetType type;
@@ -11,12 +13,14 @@ class PresetWidgetConfig {
 }
 
 class ThemePreset {
-  final String name;
+  final UsageType usageType;
+  String get name => getUsageTypeTitle(usageType);
+
   final BackgroundTheme theme;
   final List<PresetWidgetConfig> widgets;
 
   const ThemePreset({
-    required this.name,
+    required this.usageType,
     required this.theme,
     required this.widgets,
   });
@@ -25,7 +29,7 @@ class ThemePreset {
 class PresetList {
   static const List<ThemePreset> presets = [
     ThemePreset(
-      name: 'Milieubewust',
+      usageType: UsageType.environmentalist,
       theme: BackgroundTheme.green,
       widgets: [
         PresetWidgetConfig(WidgetType.batteryBundle, WidgetSize.extraLarge),
@@ -35,7 +39,7 @@ class PresetList {
       ],
     ),
     ThemePreset(
-      name: 'Tech-savvy',
+      usageType: UsageType.techSavvy,
       theme: BackgroundTheme.mutedGreen,
       widgets: [
         PresetWidgetConfig(WidgetType.batteryBundle, WidgetSize.large),
@@ -46,7 +50,7 @@ class PresetList {
       ],
     ),
     ThemePreset(
-      name: 'Off-Grid',
+      usageType: UsageType.doomsday,
       theme: BackgroundTheme.turquoise,
       widgets: [
         PresetWidgetConfig(WidgetType.batteryBundle, WidgetSize.extraLarge),
@@ -56,7 +60,7 @@ class PresetList {
       ],
     ),
     ThemePreset(
-      name: 'Financieel bewust',
+      usageType: UsageType.financial,
       theme: BackgroundTheme.mutedTurquoise,
       widgets: [
         PresetWidgetConfig(WidgetType.batteryBundle, WidgetSize.large),
@@ -70,9 +74,8 @@ class PresetList {
 
   /// Build dashboard configs from a preset instance.
   static List<DashboardConfig> buildFromPreset(ThemePreset preset) {
-    return preset.widgets.map((widget) {
+    final dashboard = preset.widgets.map((widget) {
       return DashboardConfig(
-        id: UniqueKey().toString(),
         itemId: widget.type.widgetItem.id,
         size: widget.size,
         selectedIndex: widget.type.widgetItem.supportedSizes.indexOf(
@@ -80,5 +83,7 @@ class PresetList {
         ),
       );
     }).toList();
+    DashboardStorage().save(dashboard);
+    return dashboard;
   }
 }

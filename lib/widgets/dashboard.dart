@@ -26,7 +26,6 @@ class Dashboard extends StatelessWidget {
     final children = items.map((dashboardItem) {
       final item = resolveItem(dashboardItem.itemId);
       return SizedBox(
-        key: ValueKey(dashboardItem.id),
         child: WidgetContent(
           item: item!,
           size: dashboardItem.size,

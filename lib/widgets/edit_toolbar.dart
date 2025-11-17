@@ -33,7 +33,7 @@ class _EditToolbarState extends State<EditToolbar> {
     final items = [
       _ToolbarItem(
         icon: SvgPicture.asset(
-          AssetIcons.save,
+          AssetIcons.paintBoard,
           width: 24,
           height: 24,
           colorFilter: const ColorFilter.mode(
@@ -41,7 +41,7 @@ class _EditToolbarState extends State<EditToolbar> {
             BlendMode.srcIn,
           ),
         ),
-        label: 'Opslaan',
+        label: 'Thema\'s',
         bgColor: CustomColors.dark700,
         iconColor: CustomColors.light,
         textColor: CustomColors.light,

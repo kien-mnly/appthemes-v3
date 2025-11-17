@@ -68,7 +68,7 @@ class BatteryBundleLarge extends StatelessWidget {
                     height: compactH,
                     headerTitle: 'Netwerk',
                     headerIcon: batteryHeaderIcon(AssetIcons.plug, size: 18),
-                    child: NetworkCompactContent(),
+                    child: SizedBox(height: 24, child: NetworkCompactContent()),
                   ),
                 ),
                 SizedBox(
@@ -86,7 +86,7 @@ class BatteryBundleLarge extends StatelessWidget {
                     height: compactH,
                     headerTitle: 'Thuis',
                     headerIcon: batteryHeaderIcon(AssetIcons.house, size: 18),
-                    child: HomeCompactContent(),
+                    child: SizedBox(height: 24, child: HomeCompactContent()),
                   ),
                 ),
               ],

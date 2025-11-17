@@ -4,7 +4,6 @@ import 'package:appthemes_v3/config/theme/custom_painter.dart';
 import 'package:appthemes_v3/config/theme/custom_theme.dart';
 import 'package:appthemes_v3/models/enums/background_theme.dart';
 import 'package:appthemes_v3/config/theme/theme_presets.dart';
-import 'package:appthemes_v3/models/enums/widget_type.dart';
 import 'package:appthemes_v3/models/dashboard_config.dart';
 import 'package:appthemes_v3/services/background_service.dart';
 import 'package:flutter/material.dart';
@@ -65,13 +64,13 @@ class _ThemeModalState extends State<ThemeModal> {
                     // Pass index for theme selection
                     widget.onThemeChange(index);
 
-                    // Build dashboard configs from preset and emit
+                    // Build dashboard from preset
                     widget.onPresetDashboard(
                       PresetList.buildFromPreset(selectedPreset),
                     );
                   }
                   // Preview selected preset's background theme
-                  selectTheme.setPreviewTheme = presetList[currentIndex].theme;
+                  selectTheme.preferredTheme = presetList[currentIndex].theme;
                 },
                 child: Row(
                   children: [
@@ -85,7 +84,7 @@ class _ThemeModalState extends State<ThemeModal> {
                             .bodyLarge
                             ?.copyWith(
                               color: isSelected ? accent : CustomColors.light,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                             ),
                       ),
                     ),

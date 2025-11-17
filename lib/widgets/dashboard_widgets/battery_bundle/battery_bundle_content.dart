@@ -32,6 +32,7 @@ class BatteryContentConfig {
   });
 }
 
+// replace with dynamic data
 const batteryContent = BatteryContentConfig(
   mainInputValue: '800 W',
   mainInputLabel: 'Invoer',

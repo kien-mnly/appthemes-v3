@@ -1,13 +1,11 @@
 import './enums/widget_size.dart';
 
 class DashboardConfig {
-  final String id;
   final String itemId;
   final WidgetSize size;
   final int selectedIndex;
 
   const DashboardConfig({
-    required this.id,
     required this.itemId,
     required this.size,
     required this.selectedIndex,
@@ -21,7 +19,6 @@ class DashboardConfig {
     int? selectedIndex,
   }) {
     return DashboardConfig(
-      id: id ?? this.id,
       itemId: itemId ?? this.itemId,
       size: size ?? this.size,
       selectedIndex: selectedIndex ?? this.selectedIndex,
@@ -29,7 +26,6 @@ class DashboardConfig {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
     'itemId': itemId,
     'size': size.name,
     'selectedIndex': selectedIndex,
@@ -37,7 +33,6 @@ class DashboardConfig {
 
   factory DashboardConfig.fromJson(Map<String, dynamic> json) {
     return DashboardConfig(
-      id: json['id'],
       itemId: json['itemId'],
       size: WidgetSize.values.firstWhere(
         (widgetSize) => widgetSize.name == json['size'],

@@ -1,5 +1,4 @@
 import 'package:appthemes_v3/config/theme/asset_icons.dart';
-import 'package:appthemes_v3/models/enums/background_theme.dart';
 
 enum UsageType { techSavvy, financial, environmentalist, doomsday }
 
@@ -42,18 +41,5 @@ String getUsageTypeIcon(UsageType usageType) {
       return AssetIcons.plant;
     case UsageType.doomsday:
       return AssetIcons.eyeSlash;
-  }
-}
-
-BackgroundTheme backgroundForUsageType(UsageType usageType) {
-  switch (usageType) {
-    case UsageType.techSavvy:
-      return BackgroundTheme.mutedGreen;
-    case UsageType.financial:
-      return BackgroundTheme.mutedTurquoise;
-    case UsageType.environmentalist:
-      return BackgroundTheme.green;
-    case UsageType.doomsday:
-      return BackgroundTheme.turquoise;
   }
 }
