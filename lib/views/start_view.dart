@@ -1,4 +1,5 @@
 import 'package:appthemes_v3/config/theme/custom_theme.dart';
+import 'package:appthemes_v3/models/custom_dashboard.dart';
 import 'package:appthemes_v3/widgets/custom_scaffold.dart';
 import 'package:appthemes_v3/widgets/theme_modal.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ import 'package:appthemes_v3/widgets/dashboard.dart';
 import 'package:appthemes_v3/models/dashboard_widget.dart';
 import 'package:appthemes_v3/models/widget_content.dart';
 import 'package:appthemes_v3/models/enums/widget_type.dart';
-import 'package:appthemes_v3/services/dashboard_storage.dart';
+import 'package:appthemes_v3/services/dashboard_controller.dart';
 import 'package:appthemes_v3/views/widgets/floating_bottom_bar.dart';
 import 'package:appthemes_v3/config/theme/asset_icons.dart';
 
@@ -26,31 +27,49 @@ class StartView extends StatefulWidget {
 class _StartViewState extends State<StartView> {
   bool isEditMode = false;
   int selectedThemeIndex = 2;
-  int selectedIndex = 1;
+  int selectedViewIndex = 1;
+
+  bool isPreset = false;
 
   void onItemTapped(int index) {
     if (!mounted) return;
     setState(() {
-      selectedIndex = index;
+      selectedViewIndex = index;
     });
   }
 
   final List<DashboardWidget> _dashboardItems = [];
-  final DashboardStorage _storage = DashboardStorage();
+
+  List<CustomDashboard> _customDashboards = [];
+  String? _activeCustomDashboardName;
+
+  late final DashboardController _dashboardController;
 
   @override
   void initState() {
     super.initState();
+    _dashboardController = DashboardController();
     _loadDashboard();
   }
 
   Future<void> _loadDashboard() async {
-    final stored = await _storage.load();
+    await _dashboardController.loadInitial();
+
     if (!mounted) return;
+
     setState(() {
       _dashboardItems
         ..clear()
-        ..addAll(stored.where((cfg) => resolveItem(cfg.itemId) != null));
+        ..addAll(
+          _dashboardController.items.where(
+            (cfg) => resolveItem(cfg.itemId) != null,
+          ),
+        );
+      _customDashboards = _dashboardController.customDashboards;
+      selectedThemeIndex = _dashboardController.selectedPresetIndex;
+      isPreset = _dashboardController.isPreset;
+      _activeCustomDashboardName =
+          _dashboardController.activeCustomDashboardName;
     });
   }
 
@@ -59,8 +78,9 @@ class _StartViewState extends State<StartView> {
       _dashboardItems.removeWhere((item) => item.itemId == itemId);
     });
 
-    final storage = DashboardStorage();
-    await storage.save(_dashboardItems);
+    await onDashboardChanged(
+      fromCustomDashboard: _activeCustomDashboardName != null,
+    );
   }
 
   WidgetContent? resolveItem(String itemId) {
@@ -78,21 +98,20 @@ class _StartViewState extends State<StartView> {
       final item = _dashboardItems.removeAt(oldIndex);
       _dashboardItems.insert(newIndex, item);
     });
-    _storage.save(_dashboardItems);
+    onDashboardChanged(fromCustomDashboard: _activeCustomDashboardName != null);
   }
 
-  void onAddWidget(WidgetContent item, int selectedIndex) {
-    final newItem = item.supportedSizes[selectedIndex];
+  void onAddWidget(WidgetContent item, int selectedViewIndex) {
+    final newItem = item.supportedSizes[selectedViewIndex];
     final existingItem = _dashboardItems.indexWhere(
       (current) => current.itemId == item.id,
     );
     if (existingItem == -1) {
-      final newConfig = DashboardWidget(
-        itemId: item.id,
-        size: item.supportedSizes[selectedIndex],
-      );
+      final newConfig = DashboardWidget(itemId: item.id, size: newItem);
       setState(() => _dashboardItems.add(newConfig));
-      _storage.save(_dashboardItems);
+      onDashboardChanged(
+        fromCustomDashboard: _activeCustomDashboardName != null,
+      );
       return;
     }
 
@@ -106,7 +125,42 @@ class _StartViewState extends State<StartView> {
     setState(() {
       _dashboardItems[existingItem] = updatedConfig;
     });
-    _storage.save(_dashboardItems);
+    onDashboardChanged(fromCustomDashboard: _activeCustomDashboardName != null);
+  }
+
+  Future<void> onDashboardChanged({bool fromCustomDashboard = false}) async {
+    _dashboardController.setItems(_dashboardItems);
+    await _dashboardController.persistDashboardChanges(
+      fromCustomDashboard: fromCustomDashboard,
+    );
+
+    // Keep local flags in sync with controller
+    isPreset = _dashboardController.isPreset;
+    selectedThemeIndex = _dashboardController.selectedPresetIndex;
+    _activeCustomDashboardName = _dashboardController.activeCustomDashboardName;
+    _customDashboards = _dashboardController.customDashboards;
+  }
+
+  Future<String?> askForCustomDashboardName() async {
+    String? name;
+
+    await BottomDialog.showCustom(
+      context: context,
+      child: ThemeSettingsModal(
+        selectedThemeIndex: selectedThemeIndex,
+        onThemeChange: (index) {
+          setState(() {
+            selectedThemeIndex = index;
+          });
+        },
+        onExit: () {},
+        onSaveCustomDashboard: (value) {
+          name = value;
+        },
+      ),
+    );
+
+    return name;
   }
 
   void _openAddWidget() {
@@ -119,8 +173,8 @@ class _StartViewState extends State<StartView> {
             context: context,
             child: WidgetModal(
               item: item,
-              onAdd: (pickedItem, selectedIndex) {
-                onAddWidget(item, selectedIndex);
+              onAdd: (pickedItem, selectedViewIndex) {
+                onAddWidget(item, selectedViewIndex);
               },
             ),
           );
@@ -130,16 +184,94 @@ class _StartViewState extends State<StartView> {
   }
 
   String getPageNameByIndex() {
-    switch (selectedIndex) {
+    switch (selectedViewIndex) {
       case 0:
         return 'statistics';
       case 1:
-        return 'dashboard';
+        return 'Dashboard';
       case 2:
         return 'settings';
       default:
         return 'dashboard';
     }
+  }
+
+  void _showThemeModal() {
+    BottomDialog.showCustom(
+      context: context,
+      child: ThemeModal(
+        selectedThemeIndex: selectedThemeIndex,
+        onThemeChange: (index) {
+          setState(() {
+            selectedThemeIndex = index;
+            _activeCustomDashboardName = null;
+          });
+        },
+        onPresetDashboard: (configs) {
+          setState(() {
+            _dashboardItems
+              ..clear()
+              ..addAll(configs);
+            isPreset = true;
+          });
+          onDashboardChanged();
+        },
+        customDashboards: [..._customDashboards],
+        onCustomDashboardSelected: (configs) {
+          setState(() {
+            _dashboardItems
+              ..clear()
+              ..addAll(configs);
+            isPreset = false;
+          });
+          onDashboardChanged(fromCustomDashboard: true);
+        },
+        onDeleteCustomDashboard: (dashboard) async {
+          await _dashboardController.deleteCustomDashboard(dashboard);
+          if (!mounted) return;
+          setState(() {
+            _customDashboards = _dashboardController.customDashboards;
+            _activeCustomDashboardName =
+                _dashboardController.activeCustomDashboardName;
+          });
+        },
+        activeCustomDashboardName: _activeCustomDashboardName,
+        onCustomDashboardNameSelected: (name) {
+          _activeCustomDashboardName = name;
+          Navigator.of(context).pop();
+          BottomDialog.showCustom(
+            context: context,
+            child: ThemeSettingsModal(
+              selectedThemeIndex: selectedThemeIndex,
+              onThemeChange: (index) async {
+                // Update the global selected theme index
+                setState(() => selectedThemeIndex = index);
+
+                // Update stored theme for the active custom
+                _dashboardController.selectedPresetIndex = index;
+                await _dashboardController.updateActiveCustomDashboardTheme(
+                  index,
+                );
+                if (!mounted) return;
+                setState(() {
+                  _customDashboards = _dashboardController.customDashboards;
+                });
+              },
+              onSaveCustomDashboard: (newName) async {
+                await _dashboardController.renameActiveCustomDashboard(newName);
+                if (!mounted) return;
+                setState(() {
+                  _customDashboards = _dashboardController.customDashboards;
+                  _activeCustomDashboardName =
+                      _dashboardController.activeCustomDashboardName;
+                });
+              },
+              onExit: () {},
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -176,43 +308,9 @@ class _StartViewState extends State<StartView> {
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: EditToolbar(
-                    onSave: () {
-                      BottomDialog.showCustom(
-                        context: context,
-                        child: ThemeModal(
-                          selectedThemeIndex: selectedThemeIndex,
-                          onThemeChange: (index) {
-                            setState(() {
-                              selectedThemeIndex = index;
-                            });
-                          },
-                          onPresetDashboard: (configs) {
-                            setState(() {
-                              _dashboardItems
-                                ..clear()
-                                ..addAll(configs);
-                              // Exit edit mode after applying preset dashboard
-                              isEditMode = false;
-                            });
-                            _storage.save(_dashboardItems);
-                          },
-                        ),
-                      );
-                    },
+                    onSave: _showThemeModal,
                     onCancel: () => setState(() => isEditMode = false),
                     onAddWidget: _openAddWidget,
-                    onOpenSettings: () {
-                      BottomDialog.showCustom(
-                        context: context,
-                        child: ThemeSettingsModal(
-                          selectedThemeIndex: selectedThemeIndex,
-                          onThemeChange: (index) {
-                            setState(() => selectedThemeIndex = index);
-                          },
-                          onExit: () {},
-                        ),
-                      );
-                    },
                   ),
                 ),
               ),
@@ -220,7 +318,7 @@ class _StartViewState extends State<StartView> {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: FloatingBottomBar(
-                  selectedIndex: selectedIndex,
+                  selectedViewIndex: selectedViewIndex,
                   onItemTapped: onItemTapped,
                   items: [
                     FloatingBottomBarItem(

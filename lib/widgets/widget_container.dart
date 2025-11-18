@@ -1,5 +1,5 @@
 import 'package:appthemes_v3/config/theme/custom_colors.dart';
-import 'package:appthemes_v3/widgets/widget_config.dart' hide WidgetContent;
+import 'package:appthemes_v3/widgets/widget_config.dart';
 import 'package:flutter/material.dart';
 import 'package:appthemes_v3/models/enums/widget_size.dart';
 import 'package:appthemes_v3/models/widget_content.dart';

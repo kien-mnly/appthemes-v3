@@ -12,13 +12,11 @@ class EditToolbar extends StatefulWidget with WatchItStatefulWidgetMixin {
     required this.onSave,
     required this.onCancel,
     required this.onAddWidget,
-    required this.onOpenSettings,
   });
 
   final VoidCallback onSave;
   final VoidCallback onCancel;
   final VoidCallback onAddWidget;
-  final VoidCallback onOpenSettings;
 
   @override
   State<EditToolbar> createState() => _EditToolbarState();
@@ -31,23 +29,6 @@ class _EditToolbarState extends State<EditToolbar> {
       locator<BackgroundService>(),
     ).currentBackgroundTheme.accentColor;
     final items = [
-      _ToolbarItem(
-        icon: SvgPicture.asset(
-          AssetIcons.paintBoard,
-          width: 24,
-          height: 24,
-          colorFilter: const ColorFilter.mode(
-            CustomColors.light,
-            BlendMode.srcIn,
-          ),
-        ),
-        label: 'Thema\'s',
-        bgColor: CustomColors.dark700,
-        iconColor: CustomColors.light,
-        textColor: CustomColors.light,
-        onPressed: widget.onSave,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      ),
       _ToolbarItem(
         icon: SvgPicture.asset(
           AssetIcons.addWidget,
@@ -63,11 +44,14 @@ class _EditToolbarState extends State<EditToolbar> {
         iconColor: CustomColors.dark,
         textColor: CustomColors.dark,
         onPressed: widget.onAddWidget,
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+        padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.16,
+          vertical: 12,
+        ),
       ),
       _ToolbarItem(
         icon: SvgPicture.asset(
-          AssetIcons.settings,
+          AssetIcons.paintBoard,
           width: 24,
           height: 24,
           colorFilter: const ColorFilter.mode(
@@ -75,12 +59,15 @@ class _EditToolbarState extends State<EditToolbar> {
             BlendMode.srcIn,
           ),
         ),
-        label: 'Settings',
+        label: 'Thema\'s',
         bgColor: CustomColors.dark700,
         iconColor: CustomColors.light,
         textColor: CustomColors.light,
-        onPressed: widget.onOpenSettings,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        onPressed: widget.onSave,
+        padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.09,
+          vertical: 12,
+        ),
       ),
     ];
 

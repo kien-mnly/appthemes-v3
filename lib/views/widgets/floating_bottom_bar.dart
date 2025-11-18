@@ -20,13 +20,13 @@ class FloatingBottomBarItem {
 
 class FloatingBottomBar extends StatefulWidget with WatchItStatefulWidgetMixin {
   const FloatingBottomBar({
-    required this.selectedIndex,
+    required this.selectedViewIndex,
     required this.onItemTapped,
     required this.items,
     super.key,
   });
 
-  final int selectedIndex;
+  final int selectedViewIndex;
   final void Function(int) onItemTapped;
   final List<FloatingBottomBarItem> items;
 
@@ -36,13 +36,13 @@ class FloatingBottomBar extends StatefulWidget with WatchItStatefulWidgetMixin {
     );
     final itemWidth = (screenSize - padding * 2) / items.length;
 
-    if (selectedIndex == 0) {
+    if (selectedViewIndex == 0) {
       return itemWidth / 2 - padding - 30;
     }
-    if (selectedIndex == 1) {
+    if (selectedViewIndex == 1) {
       return itemWidth * 1.5 - padding - 40;
     }
-    if (selectedIndex == 2) {
+    if (selectedViewIndex == 2) {
       return itemWidth * 2.5 - padding - 50;
     }
 
@@ -151,7 +151,7 @@ class _FloatingBottomBarState extends State<FloatingBottomBar> {
                               item.icon,
                               height: 25,
                               colorFilter: ColorFilter.mode(
-                                widget.selectedIndex == index
+                                widget.selectedViewIndex == index
                                     ? accent
                                     : CustomColors.light700,
                                 BlendMode.srcIn,
@@ -165,7 +165,7 @@ class _FloatingBottomBarState extends State<FloatingBottomBar> {
                                   .textTheme
                                   .labelSmall
                                   ?.copyWith(
-                                    color: widget.selectedIndex == index
+                                    color: widget.selectedViewIndex == index
                                         ? accent
                                         : CustomColors.light700,
                                   ),

@@ -12,11 +12,13 @@ class ThemeSettingsModal extends StatefulWidget {
     required this.selectedThemeIndex,
     required this.onThemeChange,
     required this.onExit,
+    this.onSaveCustomDashboard,
   });
 
   final int selectedThemeIndex;
   final ValueChanged<int> onThemeChange;
   final VoidCallback onExit;
+  final ValueChanged<String>? onSaveCustomDashboard;
 
   @override
   State<ThemeSettingsModal> createState() => _ThemeSettingsModalState();
@@ -26,6 +28,7 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
   late int currentIndex;
   late int originalIndex;
   bool _saved = false;
+  late final TextEditingController _nameController;
   late final BackgroundService selectTheme = locator<BackgroundService>();
 
   @override
@@ -33,6 +36,13 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
     super.initState();
     currentIndex = selectTheme.preferredTheme.index;
     originalIndex = currentIndex;
+    _nameController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
   }
 
   @override
@@ -124,14 +134,18 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
             ],
           ),
           const SizedBox(height: 16),
-          Button(
-            title: 'Huidige Dashboard Thema placeholder',
-            onPressed: () {
-              // No-op for saving; simply close
-              widget.onExit();
-              Navigator.of(context).pop();
-            },
-            type: ButtonType.outline,
+          CupertinoTextField(
+            controller: _nameController,
+            placeholder: 'Stel aangepaste dashboard naam in',
+            placeholderStyle: const TextStyle(color: CustomColors.light),
+            style: const TextStyle(color: CustomColors.light),
+            decoration: BoxDecoration(
+              color: CustomColors.dark.withValues(alpha: .6),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: CustomColors.light.withValues(alpha: 0.4),
+              ),
+            ),
           ),
           const SizedBox(height: 16),
           Button(
@@ -140,6 +154,8 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
               _saved = true;
               selectTheme.preferredTheme = BackgroundTheme.values[currentIndex];
               widget.onThemeChange(currentIndex);
+              // If a custom-dashboard save callback is provided, pass the name
+              widget.onSaveCustomDashboard?.call(_nameController.text.trim());
               widget.onExit();
               Navigator.of(context).pop();
             },
