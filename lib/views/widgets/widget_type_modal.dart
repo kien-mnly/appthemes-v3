@@ -1,5 +1,5 @@
-import 'package:appthemes_v3/models/dashboard_config.dart';
-import 'package:appthemes_v3/models/widget_item.dart';
+import 'package:appthemes_v3/models/dashboard_widget.dart';
+import 'package:appthemes_v3/models/widget_content.dart';
 import 'package:appthemes_v3/services/dashboard_storage.dart';
 import 'package:appthemes_v3/widgets/bottom_modal.dart';
 import 'package:appthemes_v3/widgets/widget_list.dart';
@@ -14,18 +14,17 @@ class WidgetTypeModal extends StatefulWidget {
 }
 
 class _WidgetTypeModalState extends State<WidgetTypeModal> {
-  final List<DashboardConfig> _dashboardItems = [];
+  final List<DashboardWidget> _dashboardItems = [];
   final DashboardStorage _storage = DashboardStorage();
 
-  void onAddWidget(WidgetItem item, int selectedIndex) {
+  void onAddWidget(WidgetContent item, int selectedIndex) {
     final newItem = item.supportedSizes[selectedIndex];
     final existingItem = _dashboardItems.indexWhere(
       (current) => current.itemId == item.id,
     );
     if (existingItem == -1) {
-      final newConfig = DashboardConfig(
+      final newConfig = DashboardWidget(
         itemId: item.id,
-        selectedIndex: selectedIndex,
         size: item.supportedSizes[selectedIndex],
       );
       setState(() => _dashboardItems.add(newConfig));
@@ -35,9 +34,8 @@ class _WidgetTypeModalState extends State<WidgetTypeModal> {
 
     final existing = _dashboardItems[existingItem];
 
-    final updatedConfig = DashboardConfig(
+    final updatedConfig = DashboardWidget(
       itemId: existing.itemId,
-      selectedIndex: selectedIndex,
       size: newItem,
     );
 
@@ -50,14 +48,14 @@ class _WidgetTypeModalState extends State<WidgetTypeModal> {
   @override
   Widget build(BuildContext context) {
     return WidgetList(
-      onPick: (WidgetItem item) {
+      onPick: (WidgetContent item) {
         Navigator.pop(context);
         BottomDialog.showCustom(
           context: context,
           child: WidgetModal(
             item: item,
             onAdd: (pickedItem, selectedIndex) {
-              onAddWidget(pickedItem, selectedIndex);
+              onAddWidget(item, selectedIndex);
             },
           ),
         );

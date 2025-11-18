@@ -2,12 +2,12 @@ import 'package:appthemes_v3/widgets/button.dart';
 import 'package:flutter/material.dart';
 import '../config/theme/custom_theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:appthemes_v3/models/widget_item.dart';
+import 'package:appthemes_v3/models/widget_content.dart';
 import 'widget_container.dart';
 
 class WidgetModal extends StatefulWidget {
-  final WidgetItem item;
-  final void Function(WidgetItem item, int selectedIndex)? onAdd;
+  final WidgetContent item;
+  final void Function(WidgetContent item, int selectedIndex)? onAdd;
 
   const WidgetModal({super.key, required this.item, this.onAdd});
 

@@ -1,5 +1,5 @@
 import 'package:appthemes_v3/config/theme/asset_icons.dart';
-import 'package:appthemes_v3/models/widget_item.dart';
+import 'package:appthemes_v3/models/widget_content.dart';
 import 'package:appthemes_v3/models/enums/widget_size.dart';
 
 enum WidgetType {
@@ -14,17 +14,17 @@ enum WidgetType {
 }
 
 extension WidgetTypeData on WidgetType {
-  WidgetItem get widgetItem {
+  WidgetContent get widgetItem {
     switch (this) {
       case WidgetType.batteryBundle:
-        return WidgetItem(
+        return WidgetContent(
           id: 'Batterij',
           svgAsset: AssetIcons.zinVoltLogo,
           type: this,
           supportedSizes: [WidgetSize.large, WidgetSize.extraLarge],
         );
       case WidgetType.smartMode:
-        return WidgetItem(
+        return WidgetContent(
           id: 'Slimme Modus',
           svgAsset: AssetIcons.smartMode,
           type: this,
@@ -35,7 +35,7 @@ extension WidgetTypeData on WidgetType {
           ],
         );
       case WidgetType.energyUsage:
-        return WidgetItem(
+        return WidgetContent(
           id: 'Energieverbruik',
           svgAsset: AssetIcons.lineChart,
           type: this,
@@ -46,7 +46,7 @@ extension WidgetTypeData on WidgetType {
           ],
         );
       case WidgetType.environmental:
-        return WidgetItem(
+        return WidgetContent(
           id: 'Milieu-impact',
           svgAsset: AssetIcons.plant,
           type: this,
@@ -57,7 +57,7 @@ extension WidgetTypeData on WidgetType {
           ],
         );
       case WidgetType.savings:
-        return WidgetItem(
+        return WidgetContent(
           id: 'Spaarmeter',
           svgAsset: AssetIcons.coins,
           type: this,
@@ -68,14 +68,14 @@ extension WidgetTypeData on WidgetType {
           ],
         );
       case WidgetType.health:
-        return WidgetItem(
+        return WidgetContent(
           id: 'Batterijgezondheid',
           svgAsset: AssetIcons.batteryHealth,
           type: this,
           supportedSizes: [WidgetSize.compact],
         );
       case WidgetType.duration:
-        return WidgetItem(
+        return WidgetContent(
           id: 'Batterijduur',
           svgAsset: AssetIcons.batteryFull,
           type: this,
@@ -86,7 +86,7 @@ extension WidgetTypeData on WidgetType {
           ],
         );
       case WidgetType.energyBalance:
-        return WidgetItem(
+        return WidgetContent(
           id: 'Energiebalans',
           svgAsset: AssetIcons.barChart,
           type: this,

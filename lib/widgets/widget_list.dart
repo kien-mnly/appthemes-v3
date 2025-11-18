@@ -4,14 +4,14 @@ import '../config/theme/custom_theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import './bottom_modal.dart';
 import 'widget_modal.dart';
-import 'package:appthemes_v3/models/widget_item.dart';
+import 'package:appthemes_v3/models/widget_content.dart';
 import 'package:appthemes_v3/models/enums/widget_type.dart';
 
 class WidgetList extends StatefulWidget {
   const WidgetList({super.key, this.items, this.onPick});
 
-  final List<WidgetItem>? items;
-  final ValueChanged<WidgetItem>? onPick;
+  final List<WidgetContent>? items;
+  final ValueChanged<WidgetContent>? onPick;
 
   @override
   State<WidgetList> createState() => _WidgetListState();
@@ -19,7 +19,7 @@ class WidgetList extends StatefulWidget {
 
 class _WidgetListState extends State<WidgetList> {
   late int currentIndex;
-  late List<WidgetItem> _items;
+  late List<WidgetContent> _items;
 
   @override
   void initState() {

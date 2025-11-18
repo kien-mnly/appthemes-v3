@@ -1,9 +1,9 @@
-import 'package:appthemes_v3/widgets/widget_content.dart';
+import 'package:appthemes_v3/widgets/widget_config.dart';
 import 'package:flutter/material.dart';
 import 'package:reorderables/reorderables.dart';
 import 'package:appthemes_v3/config/constants/widget_constants.dart';
-import 'package:appthemes_v3/models/dashboard_config.dart';
-import 'package:appthemes_v3/models/widget_item.dart';
+import 'package:appthemes_v3/models/dashboard_widget.dart';
+import 'package:appthemes_v3/models/widget_content.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({
@@ -17,8 +17,8 @@ class Dashboard extends StatelessWidget {
 
   final bool isEditMode;
   final void Function(int oldIndex, int newIndex) onReorder;
-  final WidgetItem? Function(String itemId) resolveItem;
-  final List<DashboardConfig> items;
+  final WidgetContent? Function(String itemId) resolveItem;
+  final List<DashboardWidget> items;
   final void Function(String itemId) onDeleteItem;
 
   @override
@@ -26,7 +26,7 @@ class Dashboard extends StatelessWidget {
     final children = items.map((dashboardItem) {
       final item = resolveItem(dashboardItem.itemId);
       return SizedBox(
-        child: WidgetContent(
+        child: WidgetConfig(
           item: item!,
           size: dashboardItem.size,
           isEditMode: isEditMode,

@@ -1,7 +1,7 @@
 import '../models/enums/widget_type.dart';
 import '../models/enums/widget_size.dart';
 
-class WidgetItem {
+class WidgetContent {
   final String id;
   final String svgAsset;
   final WidgetType type;
@@ -9,7 +9,7 @@ class WidgetItem {
 
   final List<WidgetSize> supportedSizes;
 
-  const WidgetItem({
+  const WidgetContent({
     required this.id,
     required this.svgAsset,
     required this.type,

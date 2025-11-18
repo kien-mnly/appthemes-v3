@@ -2,7 +2,7 @@ import 'package:appthemes_v3/services/dashboard_storage.dart';
 import 'package:appthemes_v3/models/enums/background_theme.dart';
 import 'package:appthemes_v3/models/enums/widget_type.dart';
 import 'package:appthemes_v3/models/enums/widget_size.dart';
-import 'package:appthemes_v3/models/dashboard_config.dart';
+import 'package:appthemes_v3/models/dashboard_widget.dart';
 import 'package:appthemes_v3/models/enums/usage_type.dart';
 
 class PresetWidgetConfig {
@@ -72,14 +72,11 @@ class PresetList {
   ];
 
   /// Build dashboard configs from a preset instance.
-  static List<DashboardConfig> buildFromPreset(ThemePreset preset) {
+  static List<DashboardWidget> buildFromPreset(ThemePreset preset) {
     final dashboard = preset.widgets.map((widget) {
-      return DashboardConfig(
+      return DashboardWidget(
         itemId: widget.type.widgetItem.id,
         size: widget.size,
-        selectedIndex: widget.type.widgetItem.supportedSizes.indexOf(
-          widget.size,
-        ),
       );
     }).toList();
     DashboardStorage().save(dashboard);

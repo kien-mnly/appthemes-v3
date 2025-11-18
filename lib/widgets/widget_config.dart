@@ -2,7 +2,7 @@ import 'package:appthemes_v3/config/theme/custom_colors.dart';
 import 'package:appthemes_v3/config/theme/custom_theme.dart';
 import 'package:appthemes_v3/models/enums/widget_size.dart';
 import 'package:appthemes_v3/models/enums/widget_type.dart';
-import 'package:appthemes_v3/models/widget_item.dart';
+import 'package:appthemes_v3/models/widget_content.dart';
 import 'package:appthemes_v3/widgets/custom_card.dart';
 import 'package:appthemes_v3/widgets/dashboard_widgets/battery_bundle/battery_bundle_large.dart';
 import 'package:appthemes_v3/widgets/dashboard_widgets/battery_bundle/battery_bundle_xl.dart';
@@ -11,13 +11,13 @@ import 'package:appthemes_v3/widgets/dashboard_widgets/smartmode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class WidgetContent extends StatelessWidget {
-  final WidgetItem item;
+class WidgetConfig extends StatelessWidget {
+  final WidgetContent item;
   final WidgetSize size;
   final bool isEditMode;
   final VoidCallback? onDelete;
 
-  const WidgetContent({
+  const WidgetConfig({
     super.key,
     required this.item,
     required this.size,

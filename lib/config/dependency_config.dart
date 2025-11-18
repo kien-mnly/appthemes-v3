@@ -1,4 +1,5 @@
 import 'package:appthemes_v3/services/background_service.dart';
+import 'package:appthemes_v3/services/custom_dashboard_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -20,5 +21,8 @@ void _setupServices() {
   locator.registerLazySingleton<PageController>(() => PageController());
   locator.registerLazySingleton<RouteObserver<ModalRoute<void>>>(
     () => RouteObserver<ModalRoute<void>>(),
+  );
+  locator.registerLazySingleton<CustomDashboardStorage>(
+    () => CustomDashboardStorage(),
   );
 }

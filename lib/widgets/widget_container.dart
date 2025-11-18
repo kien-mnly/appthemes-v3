@@ -1,12 +1,12 @@
 import 'package:appthemes_v3/config/theme/custom_colors.dart';
-import 'package:appthemes_v3/widgets/widget_content.dart';
+import 'package:appthemes_v3/widgets/widget_config.dart' hide WidgetContent;
 import 'package:flutter/material.dart';
 import 'package:appthemes_v3/models/enums/widget_size.dart';
-import 'package:appthemes_v3/models/widget_item.dart';
+import 'package:appthemes_v3/models/widget_content.dart';
 import '../config/theme/custom_theme.dart';
 
 class WidgetContainer extends StatefulWidget {
-  final WidgetItem item;
+  final WidgetContent item;
   final Widget? previewChild;
   final int initialIndex;
   final ValueChanged<int>? onPageChanged;
@@ -59,7 +59,7 @@ class _WidgetContainerState extends State<WidgetContainer> {
             },
             itemBuilder: (context, index) {
               final size = sizes[index];
-              final content = WidgetContent(
+              final content = WidgetConfig(
                 item: widget.item,
                 size: widget.fixedSize ?? size,
                 isEditMode: widget.isEditMode,

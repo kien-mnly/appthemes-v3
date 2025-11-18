@@ -4,7 +4,7 @@ import 'package:appthemes_v3/config/theme/custom_painter.dart';
 import 'package:appthemes_v3/config/theme/custom_theme.dart';
 import 'package:appthemes_v3/models/enums/background_theme.dart';
 import 'package:appthemes_v3/config/theme/theme_presets.dart';
-import 'package:appthemes_v3/models/dashboard_config.dart';
+import 'package:appthemes_v3/models/dashboard_widget.dart';
 import 'package:appthemes_v3/services/background_service.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +18,7 @@ class ThemeModal extends StatefulWidget {
 
   final int selectedThemeIndex;
   final ValueChanged<int> onThemeChange;
-  final ValueChanged<List<DashboardConfig>> onPresetDashboard;
+  final ValueChanged<List<DashboardWidget>> onPresetDashboard;
 
   @override
   State<ThemeModal> createState() => _ThemeModalState();

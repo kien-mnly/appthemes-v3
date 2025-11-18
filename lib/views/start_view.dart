@@ -9,8 +9,8 @@ import 'package:appthemes_v3/widgets/edit_toolbar.dart';
 import '../config/theme/custom_colors.dart';
 import '../widgets/bottom_modal.dart';
 import 'package:appthemes_v3/widgets/dashboard.dart';
-import 'package:appthemes_v3/models/dashboard_config.dart';
-import 'package:appthemes_v3/models/widget_item.dart';
+import 'package:appthemes_v3/models/dashboard_widget.dart';
+import 'package:appthemes_v3/models/widget_content.dart';
 import 'package:appthemes_v3/models/enums/widget_type.dart';
 import 'package:appthemes_v3/services/dashboard_storage.dart';
 import 'package:appthemes_v3/views/widgets/floating_bottom_bar.dart';
@@ -35,7 +35,7 @@ class _StartViewState extends State<StartView> {
     });
   }
 
-  final List<DashboardConfig> _dashboardItems = [];
+  final List<DashboardWidget> _dashboardItems = [];
   final DashboardStorage _storage = DashboardStorage();
 
   @override
@@ -63,7 +63,7 @@ class _StartViewState extends State<StartView> {
     await storage.save(_dashboardItems);
   }
 
-  WidgetItem? resolveItem(String itemId) {
+  WidgetContent? resolveItem(String itemId) {
     try {
       return WidgetType.values
           .firstWhere((t) => t.widgetItem.id == itemId)
@@ -81,15 +81,14 @@ class _StartViewState extends State<StartView> {
     _storage.save(_dashboardItems);
   }
 
-  void onAddWidget(WidgetItem item, int selectedIndex) {
+  void onAddWidget(WidgetContent item, int selectedIndex) {
     final newItem = item.supportedSizes[selectedIndex];
     final existingItem = _dashboardItems.indexWhere(
       (current) => current.itemId == item.id,
     );
     if (existingItem == -1) {
-      final newConfig = DashboardConfig(
+      final newConfig = DashboardWidget(
         itemId: item.id,
-        selectedIndex: selectedIndex,
         size: item.supportedSizes[selectedIndex],
       );
       setState(() => _dashboardItems.add(newConfig));
@@ -99,9 +98,8 @@ class _StartViewState extends State<StartView> {
 
     final existing = _dashboardItems[existingItem];
 
-    final updatedConfig = DashboardConfig(
+    final updatedConfig = DashboardWidget(
       itemId: existing.itemId,
-      selectedIndex: selectedIndex,
       size: newItem,
     );
 
@@ -115,14 +113,14 @@ class _StartViewState extends State<StartView> {
     BottomDialog.showCustom(
       context: context,
       child: WidgetList(
-        onPick: (WidgetItem item) {
+        onPick: (WidgetContent item) {
           Navigator.pop(context);
           BottomDialog.showCustom(
             context: context,
             child: WidgetModal(
               item: item,
               onAdd: (pickedItem, selectedIndex) {
-                onAddWidget(pickedItem, selectedIndex);
+                onAddWidget(item, selectedIndex);
               },
             ),
           );

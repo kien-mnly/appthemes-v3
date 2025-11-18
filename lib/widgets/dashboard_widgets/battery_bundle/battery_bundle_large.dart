@@ -1,7 +1,7 @@
 import 'package:appthemes_v3/widgets/animated_flow_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:appthemes_v3/config/theme/asset_icons.dart';
-import 'package:appthemes_v3/models/widget_item.dart';
+import 'package:appthemes_v3/models/widget_content.dart';
 import 'package:appthemes_v3/models/enums/widget_size.dart';
 import 'package:appthemes_v3/widgets/dashboard_widgets/battery_bundle/widget_bundle.dart';
 import 'package:appthemes_v3/widgets/dashboard_widgets/battery_bundle/battery_bundle_content.dart';
@@ -14,7 +14,7 @@ class BatteryBundleLarge extends StatelessWidget {
     this.gap = 12.0,
   });
 
-  final WidgetItem item;
+  final WidgetContent item;
   final WidgetSize size;
   final double gap;
 

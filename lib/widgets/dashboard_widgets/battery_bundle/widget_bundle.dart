@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:appthemes_v3/models/widget_item.dart';
+import 'package:appthemes_v3/models/widget_content.dart';
 import 'package:appthemes_v3/widgets/custom_card.dart';
 import 'package:appthemes_v3/config/theme/custom_colors.dart';
 import 'package:appthemes_v3/config/theme/custom_theme.dart';
@@ -21,7 +21,7 @@ class WidgetBundle extends StatelessWidget {
     this.showChevron = true,
   });
 
-  final WidgetItem item;
+  final WidgetContent item;
   final double width;
   final double height;
   final Widget? child;
