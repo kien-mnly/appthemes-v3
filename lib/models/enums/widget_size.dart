@@ -1,20 +1,22 @@
+import 'package:flutter/material.dart';
+
 import '../../config/constants/widget_constants.dart';
 
 enum WidgetSize { compact, regular, long, large, extraLarge }
 
 extension WidgetSizeExtension on WidgetSize {
-  double get width {
+  double width(BuildContext context) {
     switch (this) {
       case WidgetSize.compact:
-        return singleColumnWidth;
+        return singleColumnWidth(context);
       case WidgetSize.regular:
-        return singleColumnWidth;
+        return singleColumnWidth(context);
       case WidgetSize.long:
-        return doubleColumnWidth;
+        return doubleColumnWidth(context);
       case WidgetSize.large:
-        return doubleColumnWidth;
+        return doubleColumnWidth(context);
       case WidgetSize.extraLarge:
-        return doubleColumnWidth;
+        return doubleColumnWidth(context);
     }
   }
 

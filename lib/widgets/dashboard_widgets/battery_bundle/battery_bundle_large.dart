@@ -7,36 +7,28 @@ import 'package:appthemes_v3/widgets/dashboard_widgets/battery_bundle/widget_bun
 import 'package:appthemes_v3/widgets/dashboard_widgets/battery_bundle/battery_bundle_content.dart';
 
 class BatteryBundleLarge extends StatelessWidget {
-  const BatteryBundleLarge({
-    super.key,
-    required this.item,
-    required this.size,
-    this.gap = 12.0,
-  });
+  const BatteryBundleLarge({super.key, required this.item, this.gap = 12.0});
 
   final WidgetContent item;
-  final WidgetSize size;
   final double gap;
 
   @override
   Widget build(BuildContext context) {
-    final width = size.width;
-    final height = size.height;
+    final width = WidgetSize.large.width(context);
+    final height = WidgetSize.large.height;
 
-    final leftW = (width - gap) / 2;
-    final rightW = (width - gap) / 2;
-    final compactH = (height - gap) / 2;
-
+    final compactW = width / 2 - gap * 2.35;
+    final compactH = (WidgetSize.large.height - gap) / 2;
     return SizedBox(
       width: width,
       height: height,
       child: Row(
         children: [
           SizedBox(
-            width: leftW,
+            width: compactW,
             child: WidgetBundle(
               item: item,
-              width: leftW,
+              width: compactW,
               height: height,
               showChevron: false,
               child: BatteryMainContent(),
@@ -57,14 +49,14 @@ class BatteryBundleLarge extends StatelessWidget {
           ),
           // Right: two compact cards stacked (Netwerk, Thuis)
           SizedBox(
-            width: rightW,
+            width: compactW,
             child: Column(
               children: [
                 SizedBox(
                   height: compactH,
                   child: WidgetBundle(
                     item: item,
-                    width: rightW,
+                    width: compactW,
                     height: compactH,
                     headerTitle: 'Netwerk',
                     headerIcon: batteryHeaderIcon(AssetIcons.plug, size: 18),
@@ -82,7 +74,7 @@ class BatteryBundleLarge extends StatelessWidget {
                   height: compactH,
                   child: WidgetBundle(
                     item: item,
-                    width: rightW,
+                    width: compactW,
                     height: compactH,
                     headerTitle: 'Thuis',
                     headerIcon: batteryHeaderIcon(AssetIcons.house, size: 18),

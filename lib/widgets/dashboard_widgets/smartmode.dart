@@ -41,7 +41,7 @@ class Smartmode extends StatelessWidget {
                 // Set state for selected option
               },
               child: CustomCard(
-                width: (WidgetSize.large.width / 2) - 24,
+                width: (WidgetSize.large.width(context) / 2) - 24,
                 height: WidgetSize.large.height / 4,
                 padding: EdgeInsets.zero,
                 child: Row(
@@ -94,7 +94,7 @@ class Smartmode extends StatelessWidget {
           children: cards.map((data) {
             return GestureDetector(
               child: CustomCard(
-                width: (WidgetSize.large.width / 2) - 24,
+                width: (WidgetSize.large.width(context) / 2.5),
                 height: WidgetSize.large.height / 4,
                 padding: EdgeInsets.zero,
                 child: Row(

@@ -12,22 +12,20 @@ class BatteryBundleExtraLarge extends StatelessWidget {
   const BatteryBundleExtraLarge({
     super.key,
     required this.item,
-    required this.size,
     this.gap = 12.0,
   });
 
   final WidgetContent item;
-  final WidgetSize size;
   final double gap;
 
   @override
   Widget build(BuildContext context) {
-    final width = size.width;
-    final height = size.height;
+    final width = WidgetSize.extraLarge.width(context);
+    final height = WidgetSize.extraLarge.height;
 
     final largeWidgetHeight = WidgetSize.large.height;
     final compactWidgetHeight = WidgetSize.compact.height;
-    final halfW = (width - gap) / 2;
+    final halfW = width / 2 - gap * 2.35;
 
     return SizedBox(
       width: width,

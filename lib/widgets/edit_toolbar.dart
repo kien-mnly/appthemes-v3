@@ -45,7 +45,7 @@ class _EditToolbarState extends State<EditToolbar> {
         textColor: CustomColors.dark,
         onPressed: widget.onAddWidget,
         padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.16,
+          horizontal: MediaQuery.of(context).size.width * 0.2,
           vertical: 12,
         ),
       ),
@@ -65,7 +65,7 @@ class _EditToolbarState extends State<EditToolbar> {
         textColor: CustomColors.light,
         onPressed: widget.onSave,
         padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.09,
+          horizontal: MediaQuery.of(context).size.width * 0.05,
           vertical: 12,
         ),
       ),

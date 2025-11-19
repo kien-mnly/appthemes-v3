@@ -31,8 +31,8 @@ class WidgetConfig extends StatelessWidget {
   Widget build(BuildContext context) {
     if (_isBatteryBundle) {
       return size == WidgetSize.extraLarge
-          ? BatteryBundleExtraLarge(item: item, size: size)
-          : BatteryBundleLarge(item: item, size: size);
+          ? BatteryBundleExtraLarge(item: item)
+          : BatteryBundleLarge(item: item);
     }
 
     final type = item.type;
@@ -51,7 +51,7 @@ class WidgetConfig extends StatelessWidget {
         type == WidgetType.energyBalance;
 
     return CustomCard(
-      width: size.width,
+      width: size.width(context),
       height: size.height,
       padding: useZeroPadding ? EdgeInsets.zero : const EdgeInsets.all(12),
       child: Column(
