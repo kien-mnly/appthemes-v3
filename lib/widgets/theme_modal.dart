@@ -193,7 +193,7 @@ class _ThemeModalState extends State<ThemeModal> {
                               // Clear any preset selection when a custom dashboard is chosen
                               currentPresetIndex = -1;
                             });
-                            widget.onCustomDashboardSelected(custom.dashboards);
+                            widget.onCustomDashboardSelected(custom.content);
                             widget.onCustomDashboardNameSelected?.call(
                               custom.name,
                             );

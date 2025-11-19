@@ -3,25 +3,25 @@ import 'package:appthemes_v3/models/enums/background_theme.dart';
 
 class CustomDashboard {
   final String name;
-  final List<DashboardWidget> dashboards;
+  final List<DashboardWidget> content;
   final BackgroundTheme theme;
 
   CustomDashboard({
     required this.name,
-    required this.dashboards,
+    required this.content,
     required this.theme,
   });
 
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'dashboards': dashboards.map((element) => element.toJson()).toList(),
+      'content': content.map((element) => element.toJson()).toList(),
       'theme': theme.index,
     };
   }
 
   factory CustomDashboard.fromJson(Map<String, dynamic> json) {
-    final list = (json['dashboards'] as List)
+    final list = (json['content'] as List)
         .cast<Map<String, dynamic>>()
         .map(DashboardWidget.fromJson)
         .toList();
@@ -30,7 +30,7 @@ class CustomDashboard {
 
     return CustomDashboard(
       name: json['name'] as String,
-      dashboards: list,
+      content: list,
       theme: BackgroundTheme.values[themeIndex],
     );
   }

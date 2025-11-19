@@ -136,8 +136,8 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
           const SizedBox(height: 16),
           CupertinoTextField(
             controller: _nameController,
-            placeholder: 'Stel aangepaste dashboard naam in',
-            placeholderStyle: const TextStyle(color: CustomColors.light),
+            placeholder: 'Vul naam in',
+            placeholderStyle: const TextStyle(color: CustomColors.light700),
             style: const TextStyle(color: CustomColors.light),
             decoration: BoxDecoration(
               color: CustomColors.dark.withValues(alpha: .6),

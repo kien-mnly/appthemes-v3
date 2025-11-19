@@ -76,7 +76,7 @@ extension WidgetTypeData on WidgetType {
         );
       case WidgetType.duration:
         return WidgetContent(
-          id: 'Batterijduur',
+          id: 'Accuduur',
           svgAsset: AssetIcons.batteryFull,
           type: this,
           supportedSizes: [
@@ -87,7 +87,7 @@ extension WidgetTypeData on WidgetType {
         );
       case WidgetType.energyBalance:
         return WidgetContent(
-          id: 'Energiebalans',
+          id: 'Batterijverbruik',
           svgAsset: AssetIcons.barChart,
           type: this,
           supportedSizes: [WidgetSize.regular, WidgetSize.large],

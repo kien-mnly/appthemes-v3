@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/dashboard_widget.dart';
 
+// Service to handle storage of dashboard widgets of one dashboard
 class DashboardStorage {
   static const _key = 'dashboard_state';
   final FlutterSecureStorage _storage = FlutterSecureStorage();
