@@ -1,204 +1,263 @@
-import 'package:appthemes_v3/models/custom_dashboard.dart';
+import 'package:appthemes_v3/services/dashboard_storage_list.dart';
+import 'package:flutter/foundation.dart';
 import 'package:appthemes_v3/models/dashboard_widget.dart';
+import 'package:appthemes_v3/models/custom_dashboard.dart';
+import 'package:appthemes_v3/models/widget_content.dart';
+import 'package:appthemes_v3/models/enums/widget_type.dart';
 import 'package:appthemes_v3/models/theme_presets.dart';
-import 'package:appthemes_v3/services/custom_dashboard_storage.dart';
 import 'package:appthemes_v3/services/dashboard_storage.dart';
 import 'package:appthemes_v3/utils/dashboard_utils.dart';
 
-/// Encapsulates all non-UI dashboard logic: loading, saving, presets and customs.
-class DashboardController {
+class DashboardController extends ChangeNotifier {
   DashboardController({
-    DashboardStorage? dashboardStorage,
-    CustomDashboardStorage? customDashboardStorage,
-  }) : _dashboardStorage = dashboardStorage ?? DashboardStorage(),
-       _customDashboardStorage =
-           customDashboardStorage ?? CustomDashboardStorage();
+    required DashboardStorage storage,
+    required DashboardStorageList storageList,
+  }) : _storage = storage,
+       _storageList = storageList;
 
-  final DashboardStorage _dashboardStorage;
-  final CustomDashboardStorage _customDashboardStorage;
+  final DashboardStorage _storage;
+  final DashboardStorageList _storageList;
 
-  final List<DashboardWidget> _items = [];
-  final List<CustomDashboard> _customDashboards = [];
+  // --- State --- //
 
-  /// Index of the currently selected preset theme.
-  int selectedPresetIndex = 2;
+  final List<DashboardWidget> _dashboardItems = [];
+  List<DashboardWidget> get dashboardItems =>
+      List.unmodifiable(_dashboardItems);
 
-  /// Name of the currently active custom dashboard, if any.
-  String? activeCustomDashboardName;
-
-  /// Whether the current dashboard layout still matches the selected preset.
-  bool isPreset = false;
-
-  List<DashboardWidget> get items => List.unmodifiable(_items);
-
+  List<CustomDashboard> _customDashboards = [];
   List<CustomDashboard> get customDashboards =>
       List.unmodifiable(_customDashboards);
 
-  /// Loads the persisted dashboard and all custom dashboards.
-  Future<void> loadInitial() async {
-    final storedDashboard = await _dashboardStorage.load();
-    final storedCustomDashboards = await _customDashboardStorage.loadAll();
+  String? _activeCustomDashboardName;
+  String? get activeCustomDashboardName => _activeCustomDashboardName;
 
-    _items
-      ..clear()
-      ..addAll(storedDashboard);
-    _customDashboards
-      ..clear()
-      ..addAll(storedCustomDashboards);
+  /// Index of the currently selected preset theme.
+  int _selectedThemeIndex = 2;
+  int get selectedThemeIndex => _selectedThemeIndex;
 
-    // Determine if the loaded dashboard matches the current preset.
-    isPreset = _isCurrentDashboardStillPreset();
+  /// Whether the current dashboard exactly matches the selected preset.
+  bool _isPreset = false;
+  bool get isPreset => _isPreset;
+
+  // --- Lifecycle --- //
+
+  Future<void> load() async {
+    final storedDashboard = await _storage.load();
+    final storedCustomDashboards = await _storageList.loadAll();
+
+    _dashboardItems
+      ..clear()
+      ..addAll(storedDashboard.where((cfg) => resolveItem(cfg.itemId) != null));
+    _customDashboards = storedCustomDashboards;
+
+    // Recompute preset flag after loading
+    _isPreset = _isCurrentDashboardStillPreset();
+
+    notifyListeners();
   }
 
-  /// Replaces the current items with [configs] and marks them as preset.
-  Future<void> applyPresetDashboard(List<DashboardWidget> configs) async {
-    _items
-      ..clear()
-      ..addAll(configs);
-    isPreset = true;
-    activeCustomDashboardName = null;
-    await _dashboardStorage.save(_items);
+  // --- Public mutations used by the view --- //
+
+  void setSelectedThemeIndex(int index) {
+    _selectedThemeIndex = index;
+    // Changing theme alone may or may not affect preset-ness; recompute:
+    _isPreset = _isCurrentDashboardStillPreset();
+    notifyListeners();
   }
 
-  /// Applies [configs] from an existing custom dashboard.
-  Future<void> applyCustomDashboard({
-    required String name,
-    required List<DashboardWidget> configs,
-  }) async {
-    _items
-      ..clear()
-      ..addAll(configs);
-    isPreset = false;
-    activeCustomDashboardName = name;
-    await _dashboardStorage.save(_items);
+  void deleteItem(String itemId, {bool fromCustomDashboard = false}) {
+    _dashboardItems.removeWhere((item) => item.itemId == itemId);
+    _onDashboardChanged(fromCustomDashboard: fromCustomDashboard);
   }
 
-  /// Persists the current dashboard items and updates the active custom
-  /// dashboard if one is being edited.
-  Future<void> persistDashboardChanges({
+  void reorder(int oldIndex, int newIndex, {bool fromCustomDashboard = false}) {
+    final item = _dashboardItems.removeAt(oldIndex);
+    _dashboardItems.insert(newIndex, item);
+    _onDashboardChanged(fromCustomDashboard: fromCustomDashboard);
+  }
+
+  void addOrUpdateWidget(
+    WidgetContent item,
+    int selectedViewIndex, {
     bool fromCustomDashboard = false,
-  }) async {
-    await _dashboardStorage.save(_items);
+  }) {
+    final newItemSize = item.supportedSizes[selectedViewIndex];
 
-    if (fromCustomDashboard && activeCustomDashboardName != null) {
-      final index = _customDashboards.indexWhere(
-        (dashboard) => dashboard.name == activeCustomDashboardName,
-      );
-      if (index != -1) {
-        final updated = CustomDashboard(
-          name: _customDashboards[index].name,
-          dashboards: List<DashboardWidget>.from(_items),
-          theme: _customDashboards[index].theme,
-        );
-        _customDashboards[index] = updated;
-        await _customDashboardStorage.saveAll(_customDashboards);
-      }
-      return;
-    }
-
-    // When not editing an existing custom dashboard, callers can inspect
-    // [isPreset] and decide whether to branch into preset->custom flow.
-    isPreset = _isCurrentDashboardStillPreset();
-  }
-
-  /// Creates and stores a new custom dashboard with the current items and
-  /// the theme of the currently selected preset.
-  Future<CustomDashboard> createCustomDashboard(String name) async {
-    final customDashboard = CustomDashboard(
-      name: name,
-      dashboards: List<DashboardWidget>.from(_items),
-      theme: PresetList.presets[selectedPresetIndex].theme,
+    final existingIndex = _dashboardItems.indexWhere(
+      (current) => current.itemId == item.id,
     );
-    _customDashboards.add(customDashboard);
-    activeCustomDashboardName = name;
-    await _customDashboardStorage.add(customDashboard);
-    return customDashboard;
+
+    if (existingIndex == -1) {
+      final newConfig = DashboardWidget(itemId: item.id, size: newItemSize);
+      _dashboardItems.add(newConfig);
+    } else {
+      final existing = _dashboardItems[existingIndex];
+      final updatedConfig = DashboardWidget(
+        itemId: existing.itemId,
+        size: newItemSize,
+      );
+      _dashboardItems[existingIndex] = updatedConfig;
+    }
+
+    _onDashboardChanged(fromCustomDashboard: fromCustomDashboard);
   }
 
-  /// Restores the current preset layout into [_items] and persists it.
-  Future<void> restorePresetLayout() async {
-    if (selectedPresetIndex < 0 ||
-        selectedPresetIndex >= PresetList.presets.length) {
+  /// Apply a preset dashboard layout for the current selectedThemeIndex.
+  void applyCurrentPreset() {
+    if (_selectedThemeIndex < 0 ||
+        _selectedThemeIndex >= PresetList.presets.length) {
       return;
     }
-    final preset = PresetList.presets[selectedPresetIndex];
+    final preset = PresetList.presets[_selectedThemeIndex];
     final presetDashboard = PresetList.buildFromPreset(preset);
-    _items
+    _dashboardItems
       ..clear()
       ..addAll(presetDashboard);
-    activeCustomDashboardName = null;
-    isPreset = true;
-    await _dashboardStorage.save(_items);
+    _isPreset = true;
+    _activeCustomDashboardName = null;
+
+    _saveDashboardOnly();
   }
 
-  /// Deletes a custom dashboard and updates internal state.
-  Future<void> deleteCustomDashboard(CustomDashboard dashboard) async {
-    await _customDashboardStorage.delete(dashboard.name);
-    final updatedDashboards = await _customDashboardStorage.loadAll();
-    _customDashboards
+  /// Called when a user picks an existing custom dashboard from the modal.
+  void loadCustomDashboard(CustomDashboard dashboard) {
+    _dashboardItems
       ..clear()
-      ..addAll(updatedDashboards);
-    if (activeCustomDashboardName == dashboard.name) {
-      activeCustomDashboardName = null;
-    }
+      ..addAll(dashboard.content);
+    _isPreset = false;
+    _activeCustomDashboardName = dashboard.name;
+
+    _saveDashboardOnly();
   }
 
-  /// Updates the theme of the active custom dashboard to the theme of the
-  /// preset at [presetIndex].
+  Future<void> deleteCustomDashboard(CustomDashboard dashboard) async {
+    await _storageList.delete(dashboard.name);
+    final updatedDashboards = await _storageList.loadAll();
+    _customDashboards = updatedDashboards;
+    if (_activeCustomDashboardName == dashboard.name) {
+      _activeCustomDashboardName = null;
+    }
+    notifyListeners();
+  }
+
+  /// Update the theme preset index and theme associated with the active custom dashboard.
   Future<void> updateActiveCustomDashboardTheme(int presetIndex) async {
-    if (activeCustomDashboardName == null) return;
+    _selectedThemeIndex = presetIndex;
+
+    if (_activeCustomDashboardName == null) {
+      notifyListeners();
+      return;
+    }
+
     final idx = _customDashboards.indexWhere(
-      (dashboard) => dashboard.name == activeCustomDashboardName,
+      (d) => d.name == _activeCustomDashboardName,
     );
-    if (idx == -1) return;
+    if (idx == -1) {
+      notifyListeners();
+      return;
+    }
 
     final updated = CustomDashboard(
       name: _customDashboards[idx].name,
-      dashboards: _customDashboards[idx].dashboards,
+      content: _customDashboards[idx].content,
       theme: PresetList.presets[presetIndex].theme,
     );
     _customDashboards[idx] = updated;
-    await _customDashboardStorage.saveAll(_customDashboards);
+    await _storageList.saveAll(_customDashboards);
+    notifyListeners();
   }
 
-  /// Renames the active custom dashboard.
+  /// Rename the active custom dashboard.
   Future<void> renameActiveCustomDashboard(String newName) async {
     final trimmed = newName.trim();
-    if (trimmed.isEmpty || activeCustomDashboardName == null) {
-      return;
-    }
+    if (trimmed.isEmpty || _activeCustomDashboardName == null) return;
 
     final idx = _customDashboards.indexWhere(
-      (dashboard) => dashboard.name == activeCustomDashboardName,
+      (d) => d.name == _activeCustomDashboardName,
     );
     if (idx == -1) return;
 
     final updated = CustomDashboard(
       name: trimmed,
-      dashboards: _customDashboards[idx].dashboards,
+      content: _customDashboards[idx].content,
       theme: _customDashboards[idx].theme,
     );
 
     _customDashboards[idx] = updated;
-    activeCustomDashboardName = trimmed;
-    await _customDashboardStorage.saveAll(_customDashboards);
+    _activeCustomDashboardName = trimmed;
+    await _storageList.saveAll(_customDashboards);
+    notifyListeners();
   }
 
-  /// Sets the current items list. Intended to be used by the view when
-  /// reordering or adding/removing widgets.
-  void setItems(List<DashboardWidget> newItems) {
-    _items
-      ..clear()
-      ..addAll(newItems);
+  /// Called when the user finalized naming a *new* custom dashboard.
+  Future<void> saveNewCustomDashboard(String name) async {
+    final customDashboard = CustomDashboard(
+      name: name,
+      content: List<DashboardWidget>.from(_dashboardItems),
+      theme: PresetList.presets[_selectedThemeIndex].theme,
+    );
+    await _storageList.add(customDashboard);
+    _customDashboards.add(customDashboard);
+    _activeCustomDashboardName = name;
+    _isPreset = false;
+    notifyListeners();
+  }
+
+  // --- Helpers --- //
+
+  WidgetContent? resolveItem(String itemId) {
+    try {
+      return WidgetType.values
+          .firstWhere((t) => t.widgetItem.id == itemId)
+          .widgetItem;
+    } catch (_) {
+      return null;
+    }
   }
 
   bool _isCurrentDashboardStillPreset() {
-    if (selectedPresetIndex < 0 ||
-        selectedPresetIndex >= PresetList.presets.length) {
+    if (_selectedThemeIndex < 0 ||
+        _selectedThemeIndex >= PresetList.presets.length) {
       return false;
     }
-    final preset = PresetList.presets[selectedPresetIndex];
-    final presetDashboard = PresetList.buildFromPreset(preset);
-    return dashboardEquals(_items, presetDashboard);
+    final presetDashboard = PresetList.buildFromPreset(
+      PresetList.presets[_selectedThemeIndex],
+    );
+    return dashboardEquals(_dashboardItems, presetDashboard);
+  }
+
+  Future<void> _onDashboardChanged({bool fromCustomDashboard = false}) async {
+    await _storage.save(_dashboardItems);
+
+    if (fromCustomDashboard && _activeCustomDashboardName != null) {
+      final idx = _customDashboards.indexWhere(
+        (d) => d.name == _activeCustomDashboardName,
+      );
+      if (idx != -1) {
+        final updated = CustomDashboard(
+          name: _customDashboards[idx].name,
+          content: List<DashboardWidget>.from(_dashboardItems),
+          theme: _customDashboards[idx].theme,
+        );
+        _customDashboards[idx] = updated;
+        await _storageList.saveAll(_customDashboards);
+      }
+      _isPreset = false;
+      notifyListeners();
+      return;
+    }
+
+    if (_isCurrentDashboardStillPreset()) {
+      _isPreset = true;
+    } else {
+      _isPreset = false;
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> _saveDashboardOnly() async {
+    await _storage.save(_dashboardItems);
+    notifyListeners();
   }
 }

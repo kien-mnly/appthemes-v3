@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:appthemes_v3/models/custom_dashboard.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class CustomDashboardStorage {
+// Service to handle storage of multiple custom dashboards
+class DashboardStorageList {
   static const _key = 'custom_dashboards';
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
