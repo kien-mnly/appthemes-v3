@@ -58,7 +58,7 @@ class DashboardController extends ChangeNotifier {
 
   // --- Public mutations used by the view --- //
 
-  void setSelectedThemeIndex(int index) {
+  set setSelectedThemeIndex(int index) {
     _selectedThemeIndex = index;
     // Changing theme alone may or may not affect preset-ness; recompute:
     _isPreset = _isCurrentDashboardStillPreset();
@@ -169,22 +169,19 @@ class DashboardController extends ChangeNotifier {
 
   /// Rename the active custom dashboard.
   Future<void> renameActiveCustomDashboard(String newName) async {
-    final trimmed = newName.trim();
-    if (trimmed.isEmpty || _activeCustomDashboardName == null) return;
-
-    final idx = _customDashboards.indexWhere(
-      (d) => d.name == _activeCustomDashboardName,
+    final dashboardIndex = _customDashboards.indexWhere(
+      (dashboard) => dashboard.name == _activeCustomDashboardName,
     );
-    if (idx == -1) return;
+    if (dashboardIndex == -1) return;
 
     final updated = CustomDashboard(
-      name: trimmed,
-      content: _customDashboards[idx].content,
-      theme: _customDashboards[idx].theme,
+      name: newName,
+      content: _customDashboards[dashboardIndex].content,
+      theme: _customDashboards[dashboardIndex].theme,
     );
 
-    _customDashboards[idx] = updated;
-    _activeCustomDashboardName = trimmed;
+    _customDashboards[dashboardIndex] = updated;
+    _activeCustomDashboardName = newName;
     await _storageList.saveAll(_customDashboards);
     notifyListeners();
   }

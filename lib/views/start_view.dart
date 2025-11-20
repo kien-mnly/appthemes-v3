@@ -17,6 +17,7 @@ import 'package:appthemes_v3/models/widget_content.dart';
 import 'package:appthemes_v3/views/widgets/floating_bottom_bar.dart';
 import 'package:appthemes_v3/config/theme/asset_icons.dart';
 import 'package:appthemes_v3/services/dashboard_controller.dart';
+import 'package:appthemes_v3/models/custom_dashboard.dart';
 
 class StartView extends StatefulWidget with WatchItStatefulWidgetMixin {
   const StartView({super.key});
@@ -27,7 +28,6 @@ class StartView extends StatefulWidget with WatchItStatefulWidgetMixin {
 
 class _StartViewState extends State<StartView> {
   bool isEditMode = false;
-  int selectedThemeIndex = 2;
   int selectedViewIndex = 1;
 
   bool isPreset = false;
@@ -47,28 +47,6 @@ class _StartViewState extends State<StartView> {
     _controller.load();
   }
 
-  Future<String?> askForCustomDashboardName() async {
-    String? name;
-
-    await BottomDialog.showCustom(
-      context: context,
-      child: ThemeSettingsModal(
-        selectedThemeIndex: selectedThemeIndex,
-        onThemeChange: (index) {
-          setState(() {
-            selectedThemeIndex = index;
-          });
-        },
-        onExit: () {},
-        onSaveCustomDashboard: (value) {
-          name = value;
-        },
-      ),
-    );
-
-    return name;
-  }
-
   void _openAddWidget() {
     BottomDialog.showCustom(
       context: context,
@@ -80,10 +58,76 @@ class _StartViewState extends State<StartView> {
             child: WidgetModal(
               item: item,
               onAdd: (pickedItem, selectedViewIndex) {
-                _controller.addOrUpdateWidget(item, selectedViewIndex);
+                _controller.addOrUpdateWidget(
+                  item,
+                  selectedViewIndex,
+                  fromCustomDashboard:
+                      _controller.activeCustomDashboardName != null,
+                );
               },
             ),
           );
+        },
+      ),
+    );
+  }
+
+  openThemeSettings() {
+    if (_controller.isPreset) {
+      BottomDialog.showCustom(
+        context: context,
+        child: ThemeSettingsModal(
+          onThemeChange: (index) async {
+            await _controller.updateActiveCustomDashboardTheme(index);
+          },
+          onSaveCustomDashboard: (name) async {
+            await _controller.saveNewCustomDashboard(name);
+          },
+          onExit: () {
+            _controller.applyCurrentPreset();
+          },
+        ),
+      );
+    }
+  }
+
+  void _openThemeModal() {
+    BottomDialog.showCustom(
+      context: context,
+      child: ThemeModal(
+        selectedThemeIndex: _controller.selectedThemeIndex,
+        activeCustomDashboardName: _controller.activeCustomDashboardName,
+
+        onThemeChange: (index) {
+          setState(() {
+            _controller.setSelectedThemeIndex = index;
+          });
+        },
+        customDashboards: [..._controller.customDashboards],
+        onPresetDashboard: (configs) {
+          _controller.applyCurrentPreset();
+          Console.log('Selected dashboard: ${_controller.customDashboards}');
+        },
+        onDeleteCustomDashboard: (configs) {
+          _controller.deleteCustomDashboard(configs);
+        },
+        onCustomDashboardSelected: (dashboard) {
+          _controller.loadCustomDashboard(dashboard);
+          _controller.setSelectedThemeIndex = -1;
+        },
+        onCustomDashboardEditor: (name) {
+          CustomDashboard? customDashboard;
+          try {
+            customDashboard = _controller.customDashboards.firstWhere(
+              (d) => d.name == name,
+            );
+          } catch (_) {
+            customDashboard = null;
+          }
+          if (customDashboard != null) {
+            _controller.loadCustomDashboard(customDashboard);
+            openThemeSettings();
+          }
         },
       ),
     );
@@ -127,8 +171,23 @@ class _StartViewState extends State<StartView> {
               child: Dashboard(
                 items: controller.dashboardItems,
                 isEditMode: isEditMode,
-                onDeleteItem: controller.deleteItem,
-                onReorder: controller.reorder,
+                onDeleteItem: (itemId) {
+                  controller.deleteItem(
+                    itemId,
+                    fromCustomDashboard:
+                        controller.activeCustomDashboardName != null,
+                  );
+                  openThemeSettings();
+                },
+                onReorder: (newItem, oldItem) {
+                  controller.reorder(
+                    newItem,
+                    oldItem,
+                    fromCustomDashboard:
+                        controller.activeCustomDashboardName != null,
+                  );
+                  openThemeSettings();
+                },
                 resolveItem: controller.resolveItem,
               ),
             ),
@@ -137,37 +196,7 @@ class _StartViewState extends State<StartView> {
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: EditToolbar(
-                    onSave: () {
-                      BottomDialog.showCustom(
-                        context: context,
-                        child: ThemeModal(
-                          selectedThemeIndex: selectedThemeIndex,
-
-                          onThemeChange: (index) {
-                            setState(() {
-                              selectedThemeIndex = index;
-                            });
-                          },
-                          customDashboards: [...controller.customDashboards],
-                          onPresetDashboard: (configs) {
-                            controller.applyCurrentPreset();
-                            Console.log(
-                              'Selected dashboard: ${controller.customDashboards}',
-                            );
-                          },
-                          onDeleteCustomDashboard: (configs) {
-                            controller.deleteCustomDashboard(configs);
-                          },
-                          onCustomDashboardSelected: (configs) {
-                            // controller.loadCustomDashboard(configs.name);
-                          },
-                          onCustomDashboardNameSelected: (name) {
-                            // controller.loadCustomDashboard(name);
-                          },
-                        ),
-                      );
-                    },
-                    onCancel: () => setState(() => isEditMode = false),
+                    onThemeChange: _openThemeModal,
                     onAddWidget: _openAddWidget,
                   ),
                 ),
