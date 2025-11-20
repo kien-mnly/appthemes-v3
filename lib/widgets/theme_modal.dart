@@ -7,6 +7,7 @@ import 'package:appthemes_v3/models/enums/background_theme.dart';
 import 'package:appthemes_v3/models/theme_presets.dart';
 import 'package:appthemes_v3/models/dashboard_widget.dart';
 import 'package:appthemes_v3/services/background_service.dart';
+import 'package:appthemes_v3/services/dashboard_controller.dart';
 import 'package:flutter/material.dart';
 
 class ThemeModal extends StatefulWidget {
@@ -19,44 +20,44 @@ class ThemeModal extends StatefulWidget {
     required this.onCustomDashboardSelected,
     required this.onDeleteCustomDashboard,
     this.activeCustomDashboardName,
-    this.onCustomDashboardNameSelected,
+    this.onCustomDashboardEditor,
   });
 
   final int selectedThemeIndex;
   final ValueChanged<int> onThemeChange;
   final ValueChanged<List<DashboardWidget>> onPresetDashboard;
   final List<CustomDashboard> customDashboards;
-  final ValueChanged<List<DashboardWidget>> onCustomDashboardSelected;
+  final ValueChanged<CustomDashboard> onCustomDashboardSelected;
   final ValueChanged<CustomDashboard> onDeleteCustomDashboard;
   final String? activeCustomDashboardName;
-  final ValueChanged<String>? onCustomDashboardNameSelected;
+  final ValueChanged<String>? onCustomDashboardEditor;
 
   @override
   State<ThemeModal> createState() => _ThemeModalState();
 }
 
 class _ThemeModalState extends State<ThemeModal> {
-  late int currentPresetIndex;
-  late List<CustomDashboard> _customDashboards;
-  int? _selectedCustomDashboardIndex;
+  late final DashboardController controller = locator<DashboardController>();
   late final BackgroundService selectTheme = locator<BackgroundService>();
+  String? selectedDashboardType;
+  int? selectedDashboardIndex;
 
   @override
   void initState() {
     super.initState();
-    currentPresetIndex = widget.selectedThemeIndex;
-    _customDashboards = List<CustomDashboard>.from(widget.customDashboards);
 
-    // If an active custom dashboard name is provided, prefer selecting that
-    if (widget.activeCustomDashboardName != null) {
-      final index = _customDashboards.indexWhere(
-        (d) => d.name == widget.activeCustomDashboardName,
+    if (controller.activeCustomDashboardName != null) {
+      final index = controller.customDashboards.indexWhere(
+        (d) => d.name == controller.activeCustomDashboardName,
       );
       if (index != -1) {
-        _selectedCustomDashboardIndex = index;
-        currentPresetIndex = -1;
+        selectedDashboardType = 'custom';
+        selectedDashboardIndex = index;
+        return;
       }
     }
+    selectedDashboardType = 'preset';
+    selectedDashboardIndex = controller.selectedThemeIndex;
   }
 
   @override
@@ -82,31 +83,32 @@ class _ThemeModalState extends State<ThemeModal> {
             ...List.generate(presetList.length, (index) {
               final preset = presetList[index];
               final theme = preset.theme;
-              final isSelected = index == currentPresetIndex;
+              final isSelected =
+                  selectedDashboardIndex == index &&
+                  selectedDashboardType == 'preset';
               final themeLabel = preset.name;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   GestureDetector(
                     onTap: () {
-                      if (currentPresetIndex != index) {
+                      if (selectedDashboardIndex != index ||
+                          selectedDashboardType != 'preset') {
                         setState(() {
-                          currentPresetIndex = index;
-                          // Clear any selected custom dashboard when a preset is chosen
-                          _selectedCustomDashboardIndex = null;
+                          selectedDashboardIndex = index;
+                          selectedDashboardType = 'preset';
                         });
                         final selectedPreset = presetList[index];
                         // Pass index for theme selection
                         widget.onThemeChange(index);
-
                         // Build dashboard from preset
                         widget.onPresetDashboard(
                           PresetList.buildFromPreset(selectedPreset),
                         );
+                        selectTheme.preferredTheme =
+                            presetList[selectedDashboardIndex!].theme;
                         Navigator.of(context).pop();
                       }
-                      selectTheme.preferredTheme =
-                          presetList[currentPresetIndex].theme;
                     },
                     child: Row(
                       children: [
@@ -167,7 +169,7 @@ class _ThemeModalState extends State<ThemeModal> {
               );
             }),
 
-            if (_customDashboards.isNotEmpty) ...[
+            if (controller.customDashboards.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
                 'Custom dashboards',
@@ -175,9 +177,11 @@ class _ThemeModalState extends State<ThemeModal> {
                     ?.copyWith(color: CustomColors.light),
               ),
               const SizedBox(height: 8),
-              ...List.generate(_customDashboards.length, (index) {
-                final custom = _customDashboards[index];
-                final isSelected = index == _selectedCustomDashboardIndex;
+              ...List.generate(controller.customDashboards.length, (index) {
+                final custom = controller.customDashboards[index];
+                final isSelected =
+                    selectedDashboardType == 'custom' &&
+                    index == selectedDashboardIndex;
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                     vertical: 8.0,
@@ -188,16 +192,17 @@ class _ThemeModalState extends State<ThemeModal> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
-                            setState(() {
-                              _selectedCustomDashboardIndex = index;
-                              // Clear any preset selection when a custom dashboard is chosen
-                              currentPresetIndex = -1;
-                            });
-                            widget.onCustomDashboardSelected(custom.content);
-                            widget.onCustomDashboardNameSelected?.call(
-                              custom.name,
-                            );
+                            controller.setSelectedThemeIndex = -1;
                             selectTheme.preferredTheme = custom.theme;
+                            setState(() {
+                              if (selectedDashboardType != 'custom' ||
+                                  selectedDashboardIndex != index) {
+                                selectedDashboardIndex = index;
+                                selectedDashboardType = 'custom';
+                              }
+                            });
+                            widget.onCustomDashboardSelected(custom);
+                            widget.onCustomDashboardEditor?.call(custom.name);
                             Navigator.of(context).pop();
                           },
                           child: Text(
@@ -218,9 +223,7 @@ class _ThemeModalState extends State<ThemeModal> {
                       const SizedBox(width: 12),
                       GestureDetector(
                         onTap: () {
-                          widget.onCustomDashboardNameSelected?.call(
-                            custom.name,
-                          );
+                          widget.onCustomDashboardEditor?.call(custom.name);
                         },
                         child: Icon(
                           Icons.edit_outlined,
@@ -230,20 +233,30 @@ class _ThemeModalState extends State<ThemeModal> {
                       ),
                       const SizedBox(width: 12),
                       GestureDetector(
-                        onTap: () {
-                          // First notify parent so it can update storage
+                        onTap: () async {
+                          final wasActive =
+                              controller.activeCustomDashboardName ==
+                              custom.name;
                           widget.onDeleteCustomDashboard(custom);
-
+                          await controller.deleteCustomDashboard(custom);
                           setState(() {
-                            _customDashboards.removeAt(index);
-                            if (_selectedCustomDashboardIndex == index) {
-                              _selectedCustomDashboardIndex = null;
-                            } else if (_selectedCustomDashboardIndex != null &&
-                                _selectedCustomDashboardIndex! > index) {
-                              _selectedCustomDashboardIndex =
-                                  _selectedCustomDashboardIndex! - 1;
+                            if (selectedDashboardIndex == index) {
+                              selectedDashboardIndex = null;
+                            } else if (selectedDashboardIndex != null &&
+                                selectedDashboardIndex! > index) {
+                              selectedDashboardIndex =
+                                  selectedDashboardIndex! - 1;
                             }
                           });
+                          if (wasActive) {
+                            controller.setSelectedThemeIndex = 0;
+                            widget.onThemeChange(0);
+                            widget.onPresetDashboard(
+                              PresetList.buildFromPreset(PresetList.presets[0]),
+                            );
+                            selectTheme.preferredTheme =
+                                PresetList.presets[0].theme;
+                          }
                         },
                         child: Icon(
                           Icons.delete_outline,
