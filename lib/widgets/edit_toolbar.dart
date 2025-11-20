@@ -9,13 +9,11 @@ import '../config/theme/custom_colors.dart';
 class EditToolbar extends StatefulWidget with WatchItStatefulWidgetMixin {
   const EditToolbar({
     super.key,
-    required this.onSave,
-    required this.onCancel,
+    required this.onThemeChange,
     required this.onAddWidget,
   });
 
-  final VoidCallback onSave;
-  final VoidCallback onCancel;
+  final VoidCallback onThemeChange;
   final VoidCallback onAddWidget;
 
   @override
@@ -63,7 +61,7 @@ class _EditToolbarState extends State<EditToolbar> {
         bgColor: CustomColors.dark700,
         iconColor: CustomColors.light,
         textColor: CustomColors.light,
-        onPressed: widget.onSave,
+        onPressed: widget.onThemeChange,
         padding: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width * 0.05,
           vertical: 12,

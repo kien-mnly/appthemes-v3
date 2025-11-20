@@ -1,4 +1,5 @@
 import 'package:appthemes_v3/config/dependency_config.dart';
+import 'package:appthemes_v3/services/dashboard_controller.dart';
 import 'package:flutter/cupertino.dart';
 import '../config/theme/custom_colors.dart';
 import '../models/enums/background_theme.dart';
@@ -9,13 +10,11 @@ import 'package:appthemes_v3/services/background_service.dart';
 class ThemeSettingsModal extends StatefulWidget {
   const ThemeSettingsModal({
     super.key,
-    required this.selectedThemeIndex,
     required this.onThemeChange,
     required this.onExit,
     this.onSaveCustomDashboard,
   });
 
-  final int selectedThemeIndex;
   final ValueChanged<int> onThemeChange;
   final VoidCallback onExit;
   final ValueChanged<String>? onSaveCustomDashboard;
@@ -27,21 +26,23 @@ class ThemeSettingsModal extends StatefulWidget {
 class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
   late int currentIndex;
   late int originalIndex;
-  bool _saved = false;
-  late final TextEditingController _nameController;
+  bool saved = false;
+  late TextEditingController nameController;
   late final BackgroundService selectTheme = locator<BackgroundService>();
+  late final DashboardController controller = locator<DashboardController>();
 
   @override
   void initState() {
     super.initState();
     currentIndex = selectTheme.preferredTheme.index;
     originalIndex = currentIndex;
-    _nameController = TextEditingController();
+    nameController = TextEditingController();
+    nameController.text = controller.activeCustomDashboardName ?? 'Vul naam in';
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
+    nameController.dispose();
     super.dispose();
   }
 
@@ -50,9 +51,11 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
     final accent = selectTheme.currentBackgroundTheme.accentColor;
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
-        if (!_saved) {
+        if (!saved) {
           // Revert any preview changes on dismiss/cancel
           selectTheme.restorePreferredTheme = true;
+          widget.onExit();
+          // Reset local selection to original for next open
         }
       },
       child: Column(
@@ -135,9 +138,7 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
           ),
           const SizedBox(height: 16),
           CupertinoTextField(
-            controller: _nameController,
-            placeholder: 'Vul naam in',
-            placeholderStyle: const TextStyle(color: CustomColors.light700),
+            controller: nameController,
             style: const TextStyle(color: CustomColors.light),
             decoration: BoxDecoration(
               color: CustomColors.dark.withValues(alpha: .6),
@@ -151,12 +152,11 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
           Button(
             title: 'Opslaan',
             onPressed: () {
-              _saved = true;
+              saved = true;
               selectTheme.preferredTheme = BackgroundTheme.values[currentIndex];
               widget.onThemeChange(currentIndex);
               // If a custom-dashboard save callback is provided, pass the name
-              widget.onSaveCustomDashboard?.call(_nameController.text.trim());
-              widget.onExit();
+              widget.onSaveCustomDashboard?.call(nameController.text);
               Navigator.of(context).pop();
             },
           ),
@@ -164,11 +164,11 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
           Button(
             title: 'Annuleren',
             onPressed: () {
+              widget.onExit();
               // Revert preview and close without saving
               selectTheme.restorePreferredTheme = true;
               // Reset local selection to original for next open
               setState(() => currentIndex = originalIndex);
-              widget.onExit();
               Navigator.of(context).pop();
             },
             type: ButtonType.secondary,
