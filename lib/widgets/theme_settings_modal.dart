@@ -151,12 +151,20 @@ class _ThemeSettingsModalState extends State<ThemeSettingsModal> {
           const SizedBox(height: 16),
           Button(
             title: 'Opslaan',
-            onPressed: () {
+            onPressed: () async {
               saved = true;
               selectTheme.preferredTheme = BackgroundTheme.values[currentIndex];
               widget.onThemeChange(currentIndex);
-              // If a custom-dashboard save callback is provided, pass the name
-              widget.onSaveCustomDashboard?.call(nameController.text);
+              // If a custom-dashboard save callback is provided, pass the name and theme
+              if (controller.activeCustomDashboardName != null) {
+                await controller.updateActiveCustomDashboardTheme(currentIndex);
+                await controller.renameActiveCustomDashboard(
+                  nameController.text,
+                );
+              } else {
+                // If a custom-dashboard save callback is provided, pass the name
+                widget.onSaveCustomDashboard?.call(nameController.text);
+              }
               Navigator.of(context).pop();
             },
           ),

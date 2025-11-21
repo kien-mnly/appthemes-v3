@@ -47,7 +47,7 @@ class _StartViewState extends State<StartView> {
     _controller.load();
   }
 
-  void _openAddWidget() {
+  openAddWidget() {
     BottomDialog.showCustom(
       context: context,
       child: WidgetList(
@@ -91,7 +91,7 @@ class _StartViewState extends State<StartView> {
     }
   }
 
-  void _openThemeModal() {
+  openThemeModal() {
     BottomDialog.showCustom(
       context: context,
       child: ThemeModal(
@@ -196,8 +196,8 @@ class _StartViewState extends State<StartView> {
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: EditToolbar(
-                    onThemeChange: _openThemeModal,
-                    onAddWidget: _openAddWidget,
+                    onThemeChange: openThemeModal,
+                    onAddWidget: openAddWidget,
                   ),
                 ),
               ),

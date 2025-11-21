@@ -1,11 +1,14 @@
+import 'package:appthemes_v3/config/dependency_config.dart';
+import 'package:appthemes_v3/services/dashboard_controller.dart';
 import 'package:appthemes_v3/widgets/button.dart';
 import 'package:flutter/material.dart';
+import 'package:watch_it/watch_it.dart';
 import '../config/theme/custom_theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:appthemes_v3/models/widget_content.dart';
 import 'widget_container.dart';
 
-class WidgetModal extends StatefulWidget {
+class WidgetModal extends StatefulWidget with WatchItStatefulWidgetMixin {
   final WidgetContent item;
   final void Function(WidgetContent item, int selectedIndex)? onAdd;
 
@@ -20,6 +23,7 @@ class _WidgetModalState extends State<WidgetModal> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = watch(locator<DashboardController>());
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -55,7 +59,7 @@ class _WidgetModalState extends State<WidgetModal> {
               child: Button(
                 title: 'Add Widget',
                 onPressed: () {
-                  widget.onAdd!(widget.item, _selectedIndex);
+                  controller.addOrUpdateWidget(widget.item, _selectedIndex);
                   Navigator.of(context).pop();
                 },
                 type: ButtonType.primary,

@@ -8,6 +8,8 @@ import 'package:appthemes_v3/models/theme_presets.dart';
 import 'package:appthemes_v3/models/dashboard_widget.dart';
 import 'package:appthemes_v3/services/background_service.dart';
 import 'package:appthemes_v3/services/dashboard_controller.dart';
+import 'package:appthemes_v3/widgets/bottom_modal.dart';
+import 'package:appthemes_v3/widgets/theme_settings_modal.dart';
 import 'package:flutter/material.dart';
 
 class ThemeModal extends StatefulWidget {
@@ -224,6 +226,22 @@ class _ThemeModalState extends State<ThemeModal> {
                       GestureDetector(
                         onTap: () {
                           widget.onCustomDashboardEditor?.call(custom.name);
+                          Navigator.of(context).pop();
+                          BottomDialog.showCustom(
+                            context: context,
+                            child: ThemeSettingsModal(
+                              onThemeChange: (index) async {
+                                await controller
+                                    .updateActiveCustomDashboardTheme(index);
+                              },
+                              onSaveCustomDashboard: (name) async {
+                                await controller.saveNewCustomDashboard(name);
+                              },
+                              onExit: () {
+                                controller.applyCurrentPreset();
+                              },
+                            ),
+                          );
                         },
                         child: Icon(
                           Icons.edit_outlined,
