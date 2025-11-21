@@ -4,6 +4,7 @@ import 'package:appthemes_v3/config/dependency_config.dart';
 import 'package:appthemes_v3/config/theme/custom_theme.dart';
 import 'package:appthemes_v3/widgets/custom_scaffold.dart';
 import 'package:appthemes_v3/widgets/theme_modal.dart';
+import 'package:appthemes_v3/widgets/widget_settings_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:appthemes_v3/widgets/theme_settings_modal.dart';
 import 'package:appthemes_v3/widgets/widget_list.dart';
@@ -189,6 +190,12 @@ class _StartViewState extends State<StartView> {
                   openThemeSettings();
                 },
                 resolveItem: controller.resolveItem,
+                onTapItem: (dashboardItem) async {
+                  BottomDialog.showCustom(
+                    context: context,
+                    child: WidgetSettingsModal(item: dashboardItem),
+                  );
+                },
               ),
             ),
             if (isEditMode)

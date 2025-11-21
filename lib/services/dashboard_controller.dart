@@ -1,3 +1,4 @@
+import 'package:appthemes_v3/models/enums/widget_size.dart';
 import 'package:appthemes_v3/services/dashboard_storage_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:appthemes_v3/models/dashboard_widget.dart';
@@ -149,20 +150,20 @@ class DashboardController extends ChangeNotifier {
       return;
     }
 
-    final idx = _customDashboards.indexWhere(
-      (d) => d.name == _activeCustomDashboardName,
+    final dashboardIndex = _customDashboards.indexWhere(
+      (dashboard) => dashboard.name == _activeCustomDashboardName,
     );
-    if (idx == -1) {
+    if (dashboardIndex == -1) {
       notifyListeners();
       return;
     }
 
     final updated = CustomDashboard(
-      name: _customDashboards[idx].name,
-      content: _customDashboards[idx].content,
+      name: _customDashboards[dashboardIndex].name,
+      content: _customDashboards[dashboardIndex].content,
       theme: PresetList.presets[presetIndex].theme,
     );
-    _customDashboards[idx] = updated;
+    _customDashboards[dashboardIndex] = updated;
     await _storageList.saveAll(_customDashboards);
     notifyListeners();
   }
@@ -227,16 +228,16 @@ class DashboardController extends ChangeNotifier {
     await _storage.save(_dashboardItems);
 
     if (fromCustomDashboard && _activeCustomDashboardName != null) {
-      final idx = _customDashboards.indexWhere(
-        (d) => d.name == _activeCustomDashboardName,
+      final dashboardIndex = _customDashboards.indexWhere(
+        (dashboard) => dashboard.name == _activeCustomDashboardName,
       );
-      if (idx != -1) {
+      if (dashboardIndex != -1) {
         final updated = CustomDashboard(
-          name: _customDashboards[idx].name,
+          name: _customDashboards[dashboardIndex].name,
           content: List<DashboardWidget>.from(_dashboardItems),
-          theme: _customDashboards[idx].theme,
+          theme: _customDashboards[dashboardIndex].theme,
         );
-        _customDashboards[idx] = updated;
+        _customDashboards[dashboardIndex] = updated;
         await _storageList.saveAll(_customDashboards);
       }
       _isPreset = false;
@@ -256,5 +257,15 @@ class DashboardController extends ChangeNotifier {
   Future<void> _saveDashboardOnly() async {
     await _storage.save(_dashboardItems);
     notifyListeners();
+  }
+
+  void updateWidgetSize(String id, WidgetSize size) {
+    final index = _dashboardItems.indexWhere((item) => item.itemId == id);
+
+    if (index == -1) return;
+    final existing = _dashboardItems[index];
+    final updatedConfig = DashboardWidget(itemId: existing.itemId, size: size);
+    _dashboardItems[index] = updatedConfig;
+    _onDashboardChanged(fromCustomDashboard: true);
   }
 }

@@ -13,6 +13,7 @@ class Dashboard extends StatelessWidget {
     required this.onReorder,
     required this.resolveItem,
     required this.onDeleteItem,
+    required this.onTapItem,
   });
 
   final bool isEditMode;
@@ -20,17 +21,25 @@ class Dashboard extends StatelessWidget {
   final WidgetContent? Function(String itemId) resolveItem;
   final List<DashboardWidget> items;
   final void Function(String itemId) onDeleteItem;
+  final void Function(WidgetContent item) onTapItem;
 
   @override
   Widget build(BuildContext context) {
     final children = items.map((dashboardItem) {
       final item = resolveItem(dashboardItem.itemId);
-      return SizedBox(
-        child: WidgetConfig(
-          item: item!,
-          size: dashboardItem.size,
-          isEditMode: isEditMode,
-          onDelete: () => onDeleteItem(dashboardItem.itemId),
+      return GestureDetector(
+        onTap: () {
+          if (isEditMode) {
+            onTapItem(item);
+          }
+        },
+        child: SizedBox(
+          child: WidgetConfig(
+            item: item!,
+            size: dashboardItem.size,
+            isEditMode: isEditMode,
+            onDelete: () => onDeleteItem(dashboardItem.itemId),
+          ),
         ),
       );
     }).toList();
@@ -42,7 +51,6 @@ class Dashboard extends StatelessWidget {
               ? ReorderableWrap(
                   spacing: gap,
                   runSpacing: gap,
-                  needsLongPressDraggable: true,
                   onReorder: onReorder,
                   buildDraggableFeedback: (context, constraints, child) {
                     return Material(
