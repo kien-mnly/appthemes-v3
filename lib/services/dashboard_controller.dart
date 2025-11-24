@@ -1,3 +1,4 @@
+import 'package:appthemes_v3/config/dependency_config.dart';
 import 'package:appthemes_v3/models/enums/widget_size.dart';
 import 'package:appthemes_v3/services/dashboard_storage_list.dart';
 import 'package:flutter/foundation.dart';
@@ -8,16 +9,22 @@ import 'package:appthemes_v3/models/enums/widget_type.dart';
 import 'package:appthemes_v3/models/theme_presets.dart';
 import 'package:appthemes_v3/services/dashboard_storage.dart';
 import 'package:appthemes_v3/utils/dashboard_utils.dart';
+import 'package:appthemes_v3/services/background_service.dart';
 
 class DashboardController extends ChangeNotifier {
   DashboardController({
     required DashboardStorage storage,
     required DashboardStorageList storageList,
+    required ActiveDashboardStorage activeStorage,
   }) : _storage = storage,
-       _storageList = storageList;
+       _storageList = storageList,
+       _activeStorage = activeStorage;
 
   final DashboardStorage _storage;
   final DashboardStorageList _storageList;
+  final ActiveDashboardStorage _activeStorage;
+
+  BackgroundService backgroundService = locator<BackgroundService>();
 
   // --- State --- //
 
@@ -43,16 +50,38 @@ class DashboardController extends ChangeNotifier {
   // --- Lifecycle --- //
 
   Future<void> load() async {
-    final storedDashboard = await _storage.load();
+    final storedDashboardContent = await _storage.load();
     final storedCustomDashboards = await _storageList.loadAll();
+    final storedDashboard = await _activeStorage.load();
 
     _dashboardItems
       ..clear()
-      ..addAll(storedDashboard.where((cfg) => resolveItem(cfg.itemId) != null));
+      ..addAll(
+        storedDashboardContent.where((cfg) => resolveItem(cfg.itemId) != null),
+      );
     _customDashboards = storedCustomDashboards;
+    _selectedThemeIndex = storedDashboard.selectedThemeIndex;
+    _activeCustomDashboardName = storedDashboard.activeCustomDashboardName;
 
     // Recompute preset flag after loading
     _isPreset = _isCurrentDashboardStillPreset();
+
+    // Set background theme to match the loaded dashboard or preset
+    if (_isPreset &&
+        _selectedThemeIndex >= 0 &&
+        _selectedThemeIndex < PresetList.presets.length) {
+      backgroundService.preferredTheme =
+          PresetList.presets[_selectedThemeIndex].theme;
+    } else if (_activeCustomDashboardName != null) {
+      if (_customDashboards.isNotEmpty) {
+        final dashboard = _customDashboards.firstWhere(
+          (d) => d.name == _activeCustomDashboardName,
+          orElse: () =>
+              _customDashboards.first, // Fallback to first if active not found
+        );
+        backgroundService.preferredTheme = dashboard.theme;
+      }
+    }
 
     notifyListeners();
   }
@@ -63,6 +92,7 @@ class DashboardController extends ChangeNotifier {
     _selectedThemeIndex = index;
     // Changing theme alone may or may not affect preset-ness; recompute:
     _isPreset = _isCurrentDashboardStillPreset();
+    _saveDashboard();
     notifyListeners();
   }
 
@@ -117,7 +147,11 @@ class DashboardController extends ChangeNotifier {
     _isPreset = true;
     _activeCustomDashboardName = null;
 
-    _saveDashboardOnly();
+    // Set background theme to match preset
+    backgroundService.preferredTheme = preset.theme;
+
+    _saveDashboardContentOnly();
+    _saveDashboard();
   }
 
   /// Called when a user picks an existing custom dashboard from the modal.
@@ -128,7 +162,11 @@ class DashboardController extends ChangeNotifier {
     _isPreset = false;
     _activeCustomDashboardName = dashboard.name;
 
-    _saveDashboardOnly();
+    // Set background theme to match custom dashboard
+    backgroundService.preferredTheme = dashboard.theme;
+
+    _saveDashboardContentOnly();
+    _saveDashboard();
   }
 
   Future<void> deleteCustomDashboard(CustomDashboard dashboard) async {
@@ -137,6 +175,7 @@ class DashboardController extends ChangeNotifier {
     _customDashboards = updatedDashboards;
     if (_activeCustomDashboardName == dashboard.name) {
       _activeCustomDashboardName = null;
+      await _saveDashboard();
     }
     notifyListeners();
   }
@@ -146,6 +185,7 @@ class DashboardController extends ChangeNotifier {
     _selectedThemeIndex = presetIndex;
 
     if (_activeCustomDashboardName == null) {
+      await _saveDashboard();
       notifyListeners();
       return;
     }
@@ -154,6 +194,7 @@ class DashboardController extends ChangeNotifier {
       (dashboard) => dashboard.name == _activeCustomDashboardName,
     );
     if (dashboardIndex == -1) {
+      await _saveDashboard();
       notifyListeners();
       return;
     }
@@ -165,6 +206,7 @@ class DashboardController extends ChangeNotifier {
     );
     _customDashboards[dashboardIndex] = updated;
     await _storageList.saveAll(_customDashboards);
+    await _saveDashboard();
     notifyListeners();
   }
 
@@ -184,6 +226,7 @@ class DashboardController extends ChangeNotifier {
     _customDashboards[dashboardIndex] = updated;
     _activeCustomDashboardName = newName;
     await _storageList.saveAll(_customDashboards);
+    await _saveDashboard();
     notifyListeners();
   }
 
@@ -198,6 +241,8 @@ class DashboardController extends ChangeNotifier {
     _customDashboards.add(customDashboard);
     _activeCustomDashboardName = name;
     _isPreset = false;
+    await _saveDashboardContentOnly();
+    await _saveDashboard();
     notifyListeners();
   }
 
@@ -254,9 +299,17 @@ class DashboardController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _saveDashboardOnly() async {
+  Future<void> _saveDashboardContentOnly() async {
     await _storage.save(_dashboardItems);
     notifyListeners();
+  }
+
+  Future<void> _saveDashboard() async {
+    final dashboard = ActiveDashboard(
+      selectedThemeIndex: _selectedThemeIndex,
+      activeCustomDashboardName: _activeCustomDashboardName,
+    );
+    await _activeStorage.save(dashboard);
   }
 
   void updateWidgetSize(String id, WidgetSize size) {

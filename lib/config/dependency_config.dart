@@ -24,10 +24,14 @@ void _setupDashboards() {
     () => DashboardStorageList(),
   );
   locator.registerLazySingleton<DashboardStorage>(() => DashboardStorage());
+  locator.registerLazySingleton<ActiveDashboardStorage>(
+    () => ActiveDashboardStorage(),
+  );
   locator.registerLazySingleton<DashboardController>(
     () => DashboardController(
       storage: locator<DashboardStorage>(),
       storageList: locator<DashboardStorageList>(),
+      activeStorage: locator<ActiveDashboardStorage>(),
     ),
   );
 }

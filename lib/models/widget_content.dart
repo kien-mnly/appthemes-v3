@@ -6,6 +6,7 @@ class WidgetContent {
   final String svgAsset;
   final WidgetType type;
   final Map<String, dynamic>? meta;
+  // Add page/view that support this widget
 
   final List<WidgetSize> supportedSizes;
 
