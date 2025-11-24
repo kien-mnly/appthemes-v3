@@ -25,7 +25,7 @@ class BatteryBundleExtraLarge extends StatelessWidget {
 
     final largeWidgetHeight = WidgetSize.large.height;
     final compactWidgetHeight = WidgetSize.compact.height;
-    final halfW = width / 2 - gap * 2.35;
+    final halfW = WidgetSize.compact.width(context);
 
     return SizedBox(
       width: width,

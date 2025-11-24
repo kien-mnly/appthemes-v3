@@ -8,13 +8,13 @@ const double doubleRowHeight = singleRowHeight * 2 + gap;
 // const double doubleColumnWidth = doubleRowHeight * 2 + gap;
 
 double doubleColumnWidth(BuildContext context) {
-  double width = MediaQuery.of(context).size.width;
+  double width = MediaQuery.of(context).size.width - 48;
   return width;
 }
 
 double singleColumnWidth(BuildContext context) {
-  double width = MediaQuery.of(context).size.width;
-  return width / 2 - gap * 2.35;
+  double width = (doubleColumnWidth(context) / 2) - (gap / 2);
+  return width;
 }
 
 const EdgeInsets widgetPadding = EdgeInsets.symmetric(
